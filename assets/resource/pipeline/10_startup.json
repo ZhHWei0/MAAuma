@@ -1,12 +1,48 @@
 {
-  "启动游戏": {
-    "action": {"type": "StartApp", "param": {"package": "TODO_赛马娘包名"}},
-    "next": ["启动_点击进入游戏"]
+  "进入主界面": {
+    "action": {"type": "StartApp", "param": {"package": "com.bilibili.umamusu"}},
+    "next": ["进入_跳过动画", "进入_更新确认", "进入_签到奖励", "进入_公告弹窗", "进入_识别主页", "进入_点击开始"],
+    "timeout": 180000
   },
-  "启动_点击进入游戏": {
-    "recognition": {"type": "TemplateMatch", "param": {"template": ["启动/进入游戏.png"], "threshold": 0.82}},
+  "进入_跳过动画": {
+    "recognition": {"type": "TemplateMatch", "param": {"template": ["启动/跳过按钮.png"], "roi": [507, 1083, 213, 197], "threshold": 0.85}},
     "action": {"type": "Click"},
-    "next": ["启动_等待主界面"]
+    "next": ["进入_跳过动画", "进入_更新确认", "进入_签到奖励", "进入_公告弹窗", "进入_识别主页", "进入_点击开始"],
+    "post_delay": 1000,
+    "timeout": 180000
   },
-  "启动_等待主界面": {"next": ["主界面_已到达", "通用_关闭弹窗"], "timeout": 180000}
+  "进入_点击开始": {
+    "recognition": {"type": "OCR", "param": {"expected": ["点击屏幕开始", "优俊少女"], "roi": [160, 940, 400, 205]}},
+    "action": {"type": "Click"},
+    "next": ["进入_跳过动画", "进入_更新确认", "进入_签到奖励", "进入_公告弹窗", "进入_识别主页", "进入_点击开始"],
+    "timeout": 180000
+  },
+  "进入_更新确认": {
+    "recognition": {"type": "OCR", "param": {"expected": ["确定"]}},
+    "action": {"type": "Click"},
+    "next": ["进入_跳过动画", "进入_更新确认", "进入_签到奖励", "进入_公告弹窗", "进入_识别主页", "进入_点击开始"],
+    "timeout": 180000
+  },
+  "进入_签到奖励": {
+    "recognition": {"type": "OCR", "param": {"expected": ["TODO_签到奖励按钮文案"]}},
+    "action": {"type": "Click"},
+    "next": ["进入_跳过动画", "进入_更新确认", "进入_签到奖励", "进入_公告弹窗", "进入_识别主页", "进入_点击开始"],
+    "timeout": 180000
+  },
+  "进入_公告弹窗": {
+    "recognition": {"type": "OCR", "param": {"expected": ["关闭", "返回"], "roi": [170, 1125, 373, 112]}},
+    "action": {"type": "Click"},
+    "next": ["进入_跳过动画", "进入_更新确认", "进入_签到奖励", "进入_公告弹窗", "进入_识别主页", "进入_点击开始"],
+    "timeout": 180000
+  },
+  "进入_识别主页": {
+    "recognition": {"type": "OCR", "param": {"expected": ["主页"], "roi": [0, 1120, 720, 160]}},
+    "post_delay": 1000,
+    "next": ["进入_跳过动画", "进入_更新确认", "进入_签到奖励", "进入_公告弹窗", "进入_确认主页", "进入_点击开始"],
+    "timeout": 180000
+  },
+  "进入_确认主页": {
+    "recognition": {"type": "OCR", "param": {"expected": ["主页"], "roi": [0, 1120, 720, 160]}},
+    "next": []
+  }
 }

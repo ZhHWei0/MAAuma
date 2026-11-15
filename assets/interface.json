@@ -1,18 +1,48 @@
 {
   "interface_version": 2,
   "name": "MaaUma",
-  "description": "赛马娘自动化助手：育成循环、日常领取与通用导航",
+  "description": "赛马娘自动化助手：进入主界面、社团签到、团队竞技场与日常赛事",
   "license": "MIT",
   "version": "0.1.0",
   "welcome": "请先补齐 docs/resource-placeholders.md 中的模板图和 OCR 文案。",
   "controller": [{"name": "Android 模拟器", "type": "Adb", "display_short_side": 720}],
   "resource": [{"name": "默认资源", "path": ["./resource"]}],
   "task": [
-    {"name": "启动游戏并进入主界面", "entry": "启动游戏"},
-    {"name": "回到主界面", "entry": "回到主界面"},
-    {"name": "开始一轮育成", "entry": "开始育成"},
-    {"name": "领取每日任务奖励", "entry": "领取每日任务奖励"},
-    {"name": "每日签到", "entry": "每日签到"}
+    {"name": "进入主界面", "entry": "进入主界面"},
+    {"name": "社团签到", "entry": "社团签到", "option": ["捐赠请求跑鞋"]},
+    {"name": "团队竞技场", "entry": "团队竞技场"},
+    {"name": "日常赛事", "entry": "日常赛事", "option": ["日常赛事", "日常传奇赛事"]}
   ],
-  "option": {}
+  "option": {
+    "日常赛事": {
+      "type": "select",
+      "label": "日常赛事",
+      "description": "选择日常赛事类型。金币流程已接入到点击参赛；协助积分流程待补充。",
+      "default_case": "金币",
+      "cases": [
+        {"name": "金币", "pipeline_override": {"日常赛事_点击日常赛事": {"next": ["日常赛事_金币_选择月光奖"]}}},
+        {"name": "协助积分", "pipeline_override": {"日常赛事_点击日常赛事": {"next": ["日常赛事_协助积分_待补充"]}}}
+      ]
+    },
+    "日常传奇赛事": {
+      "type": "select",
+      "label": "日常传奇赛事",
+      "description": "占位设置，选项与流程稍后补充，目前不执行传奇赛事操作。",
+      "default_case": "待补充",
+      "cases": [{"name": "待补充"}]
+    },
+    "捐赠请求跑鞋": {
+      "type": "select",
+      "label": "捐赠请求跑鞋",
+      "description": "选择社团捐赠请求的跑鞋种类，每次只选择一种。默认短距离跑鞋。",
+      "default_case": "短距离跑鞋",
+      "cases": [
+        {"name": "短距离跑鞋", "pipeline_override": {"社团_选择用户请求": {"recognition": {"type": "OCR", "param": {"expected": ["短距离跑鞋"]}}}}},
+        {"name": "英里跑鞋", "pipeline_override": {"社团_选择用户请求": {"recognition": {"type": "OCR", "param": {"expected": ["英里跑鞋"]}}}}},
+        {"name": "中距离跑鞋", "pipeline_override": {"社团_选择用户请求": {"recognition": {"type": "OCR", "param": {"expected": ["中距离跑鞋"]}}}}},
+        {"name": "长距离跑鞋", "pipeline_override": {"社团_选择用户请求": {"recognition": {"type": "OCR", "param": {"expected": ["长距离跑鞋"]}}}}},
+        {"name": "泥地跑鞋", "pipeline_override": {"社团_选择用户请求": {"recognition": {"type": "OCR", "param": {"expected": ["泥地跑鞋"]}}}}}
+      ]
+    }
+  }
 }

@@ -2,7 +2,7 @@
 
 基于 [MaaFramework](https://github.com/MaaXYZ/MaaFramework) 的赛马娘自动化项目骨架。
 
-当前版本专注于把任务流程和资源目录搭好。识图模板、OCR 文案、模拟器包名等游戏相关数据统一使用 `TODO_` 占位，拿到实际截图后可以逐项替换。
+当前版本包含四个任务模块：进入主界面、社团签到、团队竞技场、日常赛事。进入主界面、社团签到已按流程文档建立；日常赛事金币分支已接入到点击“参赛”，协助积分及日常传奇赛事待补充；团队竞技场暂时保留占位入口。尚未提供的识图模板、OCR 文案和点击坐标保留占位，拿到实际截图后逐项替换。
 
 ## 目录
 
@@ -12,7 +12,7 @@ assets/
   resource/
     pipeline/                    # 任务流水线 JSON
     image/                       # 模板图
-    model/ocr/                   # 可选 OCR 模型
+    model/ocr/                   # 必需的 OCR 模型（本地准备）
 docs/
   resource-placeholders.md       # 占位资源清单
 scripts/
@@ -21,11 +21,13 @@ scripts/
 
 ## 使用方式
 
-1. 使用 MFAAvalonia 或其他 MaaFramework UI 加载本项目目录。
-2. 连接 Android 模拟器，默认控制器按 16:9 横屏配置。
-3. 在 `assets/resource/pipeline/` 中把 `TODO_` OCR 文案替换成实际游戏文字。
-4. 按 `docs/resource-placeholders.md` 的清单补齐模板图，并删除对应节点中的占位说明。
-5. 先单独运行“启动游戏并进入主界面”，再逐个启用育成和日常任务。
+1. 准备一套完整的 OCR 模型，用 `scripts/install-ocr.ps1 -ModelDirectory '模型目录'` 安装。确认 `assets/resource/model/ocr/` 内有 `det.onnx`、`rec.onnx`、`keys.txt`，详见该目录的 README。
+2. 将 `assets/` 内的 `interface.json` 和整个 `resource/` 目录复制到赛马娘专用的 MFAAvalonia 程序目录，让 `interface.json` 与 `MFAAvalonia.exe` 同级。模型必须一起部署。
+3. 连接 Android 模拟器。当前识别坐标按短边 720 的竖屏 720x1280 配置，宽高比例不同需调整 ROI。
+4. 在 `assets/resource/pipeline/` 中替换游戏包名和 `TODO_` OCR 文案，按 `docs/resource-placeholders.md` 补齐图片、坐标，并把修改同步到测试目录。
+5. 先单独运行“进入主界面”，再测试“社团签到”。日常赛事的金币分支当前执行到点击“参赛”，协助积分及日常传奇赛事待补充，团队竞技场仍为占位入口。
+
+“社团签到”的任务配置提供“捐赠请求跑鞋”单选项，可选择短距离、英里、中距离、长距离或泥地跑鞋，默认短距离跑鞋。修改后识别并点击对应的道具名称，再在 `[351, 769, 331, 131]` 内识别“确定”并点击。配置由 `interface.json` 声明，更新时要与资源一并复制到 MFA 程序目录并重启前端；已有任务未显示新选项时，移除后重新添加“社团签到”。社团签到的固定点击坐标仍需补齐，详见占位清单。
 
 ## MaaFramework 同步
 

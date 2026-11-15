@@ -1,0 +1,8 @@
+{
+  "团队竞技场": {"next": ["团队竞技场_待补充"]},
+  "团队竞技场_待补充": {
+    "recognition": {"type": "OCR", "param": {"expected": ["TODO_团队竞技场流程入口文案"]}},
+    "action": {"type": "Click"},
+    "next": []
+  }
+}

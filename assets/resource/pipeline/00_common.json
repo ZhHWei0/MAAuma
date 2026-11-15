@@ -1,7 +1,12 @@
 {
-  "回到主界面": {"next": ["主界面_已到达", "通用_关闭弹窗", "通用_点击返回"], "timeout": 120000},
+  "回到主界面": {
+    "recognition": {"type": "OCR", "param": {"expected": ["主页"], "roi": [0, 1120, 720, 160]}},
+    "action": {"type": "Click"},
+    "next": ["主界面_已到达", "通用_关闭弹窗", "通用_点击返回"],
+    "timeout": 120000
+  },
   "主界面_已到达": {
-    "recognition": {"type": "TemplateMatch", "param": {"template": ["通用/主界面标志.png"], "threshold": 0.82}},
+    "recognition": {"type": "OCR", "param": {"expected": ["主页"], "roi": [0, 1120, 720, 160]}},
     "next": []
   },
   "通用_关闭弹窗": {
