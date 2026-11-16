@@ -1,0 +1,97 @@
+{
+  "$日常传奇赛事_列表识别区域": {
+    "roi": [8, 463, 701, 572],
+    "name_roi_offset": [-116, -10, 119, 77],
+    "race_roi_offset": [-88, 95, 125, 32]
+  },
+  "临时测试_传奇赛事选卡": {
+    "next": ["日常传奇赛事_复位列表"]
+  },
+  "日常传奇赛事_点击赛事入口": {
+    "action": {"type": "Click", "param": {"target": [523, 1223, 1, 2]}},
+    "next": ["日常传奇赛事_点击日常安排"]
+  },
+  "日常传奇赛事_点击日常安排": {
+    "recognition": {"type": "OCR", "param": {"expected": ["日常安排"], "roi": [47, 945, 330, 192]}},
+    "action": {"type": "Click"},
+    "next": ["日常传奇赛事_点击分层入口", "日常传奇赛事_点击文字入口"]
+  },
+  "日常传奇赛事_点击分层入口": {
+    "recognition": {"type": "And", "param": {"all_of": [
+      {"recognition": {"type": "OCR", "param": {"expected": ["^\\s*日常\\s*$"], "roi": [432, 976, 158, 53]}}},
+      {"recognition": {"type": "OCR", "param": {"expected": ["传奇\\s*赛事"], "roi": [432, 976, 158, 53]}}}
+    ], "box_index": 0}},
+    "action": {"type": "Click"},
+    "next": ["日常传奇赛事_已点击入口"]
+  },
+  "日常传奇赛事_点击文字入口": {
+    "recognition": {"type": "OCR", "param": {"expected": ["传奇\\s*赛事"], "roi": [432, 976, 158, 53]}},
+    "action": {"type": "Click"},
+    "next": ["日常传奇赛事_已点击入口"]
+  },
+  "日常传奇赛事_已点击入口": {
+    "post_delay": 1000,
+    "next": ["日常传奇赛事_复位列表"]
+  },
+  "日常传奇赛事_复位列表": {
+    "action": {"type": "Swipe", "param": {"begin": [406, 557], "end": [410, 1191], "duration": 1000}},
+    "repeat": 3,
+    "pre_delay": 0,
+    "post_delay": 1000,
+    "next": ["日常传奇赛事_查找并选择卡片"]
+  },
+  "日常传奇赛事_查找并选择卡片": {
+    "action": {"type": "Custom", "param": {
+      "custom_action": "DailyLegendSelectCard",
+      "custom_action_param": {
+        "character": "神鹰",
+        "avatar_node": "日常传奇赛事_头像候选",
+        "name_node": "日常传奇赛事_角色名字校验",
+        "race_node": "日常传奇赛事_赛事名字校验",
+        "click_node": "日常传奇赛事_点击已校验卡片",
+        "swipe_node": "日常传奇赛事_滑动列表",
+        "timeout_ms": 50000
+      }
+    }},
+    "next": ["日常传奇赛事_已选择卡片"]
+  },
+  "日常传奇赛事_头像候选": {
+    "recognition": {"type": "TemplateMatch", "param": {
+      "template": ["日常传奇赛事/头像/神鹰.png"],
+      "roi": [8, 463, 701, 572],
+      "green_mask": true,
+      "threshold": 0.85,
+      "order_by": "Score"
+    }},
+    "next": []
+  },
+  "日常传奇赛事_点击已校验卡片": {
+    "action": {"type": "Click"},
+    "next": []
+  },
+  "日常传奇赛事_滑动列表": {
+    "action": {"type": "Swipe", "param": {"begin": [352, 880], "end": [351, 423], "duration": 5000}},
+    "pre_delay": 0,
+    "post_delay": 1000,
+    "next": []
+  },
+  "日常传奇赛事_已选择卡片": {
+    "next": []
+  },
+  "日常传奇赛事_角色名字校验": {
+    "recognition": {"type": "OCR", "param": {"expected": ["神\\s*鹰"]}},
+    "next": []
+  },
+  "日常传奇赛事_文字图片校验": {
+    "recognition": {"type": "TemplateMatch", "param": {
+      "template": ["日常传奇赛事/名字/菱曙.png"],
+      "threshold": 0.85,
+      "order_by": "Score"
+    }},
+    "next": []
+  },
+  "日常传奇赛事_赛事名字校验": {
+    "recognition": {"type": "OCR", "param": {"expected": ["全\\s*国\\s*杯"]}},
+    "next": []
+  }
+}

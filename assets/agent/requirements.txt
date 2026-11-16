@@ -1,0 +1,2 @@
+# Keep the Python API and Agent binary compatible with MFA's MaaFramework.
+maafw==5.12.2

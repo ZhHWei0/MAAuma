@@ -1,0 +1,352 @@
+{
+  "source": {
+    "file": "马娘.xlsx",
+    "sheet": "Sheet1",
+    "range": "B1:M8"
+  },
+  "list_roi": [
+    8,
+    463,
+    701,
+    572
+  ],
+  "name_roi_offset": [
+    -116,
+    -10,
+    119,
+    77
+  ],
+  "race_roi_offset": [
+    -88,
+    95,
+    125,
+    32
+  ],
+  "avatar_threshold": 0.85,
+  "avatar_direct_click_threshold": 0.95,
+  "characters": [
+    {
+      "name": "神鹰",
+      "ocr_name": "神鹰",
+      "race": "全国杯",
+      "avatar_template": "日常传奇赛事/头像/神鹰.png",
+      "name_template": null
+    },
+    {
+      "name": "特别周",
+      "ocr_name": "特别周",
+      "race": "全国杯",
+      "avatar_template": "日常传奇赛事/头像/特别周.png",
+      "name_template": null
+    },
+    {
+      "name": "鲁道夫象征",
+      "ocr_name": "鲁道夫象征",
+      "race": "全国杯",
+      "avatar_template": "日常传奇赛事/头像/鲁道夫象征.png",
+      "name_template": null
+    },
+    {
+      "name": "帝王光辉",
+      "ocr_name": "帝王光辉",
+      "race": "短途者锦标赛",
+      "avatar_template": "日常传奇赛事/头像/帝王光辉.png",
+      "name_template": null
+    },
+    {
+      "name": "大树快车",
+      "ocr_name": "大树快车",
+      "race": "短途者锦标赛",
+      "avatar_template": "日常传奇赛事/头像/大树快车.png",
+      "name_template": null
+    },
+    {
+      "name": "樱花进王",
+      "ocr_name": "樱花进王",
+      "race": "短途者锦标赛",
+      "avatar_template": "日常传奇赛事/头像/樱花进王.png",
+      "name_template": null
+    },
+    {
+      "name": "真机伶",
+      "ocr_name": "真机伶",
+      "race": "短途者锦标赛",
+      "avatar_template": "日常传奇赛事/头像/真机伶.png",
+      "name_template": null
+    },
+    {
+      "name": "西野花",
+      "ocr_name": "西野花",
+      "race": "短途者锦标赛",
+      "avatar_template": "日常传奇赛事/头像/西野花.png",
+      "name_template": "日常传奇赛事/名字/西野花.png"
+    },
+    {
+      "name": "菱曙",
+      "ocr_name": "菱曙",
+      "race": "短途者锦标赛",
+      "avatar_template": "日常传奇赛事/头像/菱曙.png",
+      "name_template": "日常传奇赛事/名字/菱曙.png"
+    },
+    {
+      "name": "胜利奖券",
+      "ocr_name": "胜利奖券",
+      "race": "全国德比",
+      "avatar_template": "日常传奇赛事/头像/胜利奖券.png",
+      "name_template": null
+    },
+    {
+      "name": "伏特加",
+      "ocr_name": "伏特加",
+      "race": "全国德比",
+      "avatar_template": "日常传奇赛事/头像/伏特加.png",
+      "name_template": null
+    },
+    {
+      "name": "东海帝王",
+      "ocr_name": "东海帝王",
+      "race": "全国德比",
+      "avatar_template": "日常传奇赛事/头像/东海帝王.png",
+      "name_template": null
+    },
+    {
+      "name": "重炮",
+      "ocr_name": "重炮",
+      "race": "天王奖（春）",
+      "avatar_template": "日常传奇赛事/头像/重炮.png",
+      "name_template": null
+    },
+    {
+      "name": "目白麦昆[优雅曲线]",
+      "ocr_name": "目白麦昆",
+      "race": "天王奖（春）",
+      "avatar_template": "日常传奇赛事/头像/目白麦昆[优雅曲线].png",
+      "name_template": null
+    },
+    {
+      "name": "好歌剧",
+      "ocr_name": "好歌剧",
+      "race": "天王奖（春）",
+      "avatar_template": "日常传奇赛事/头像/好歌剧.png",
+      "name_template": null
+    },
+    {
+      "name": "超级溪流",
+      "ocr_name": "超级溪流",
+      "race": "天王奖（春）",
+      "avatar_template": "日常传奇赛事/头像/超级溪流.png",
+      "name_template": null
+    },
+    {
+      "name": "目白麦昆[天际尽头]",
+      "ocr_name": "目白麦昆",
+      "race": "天王奖（春）",
+      "avatar_template": "日常传奇赛事/头像/目白麦昆[天际尽头].png",
+      "name_template": null
+    },
+    {
+      "name": "米浴",
+      "ocr_name": "米浴",
+      "race": "天王奖（春）",
+      "avatar_template": "日常传奇赛事/头像/米浴.png",
+      "name_template": null
+    },
+    {
+      "name": "目白光明",
+      "ocr_name": "目白光明",
+      "race": "天王奖（春）",
+      "avatar_template": "日常传奇赛事/头像/目白光明.png",
+      "name_template": null
+    },
+    {
+      "name": "目白莱恩",
+      "ocr_name": "目白莱恩",
+      "race": "宝冢纪念",
+      "avatar_template": "日常传奇赛事/头像/目白莱恩.png",
+      "name_template": null
+    },
+    {
+      "name": "无声铃鹿",
+      "ocr_name": "无声铃鹿",
+      "race": "宝冢纪念",
+      "avatar_template": "日常传奇赛事/头像/无声铃鹿.png",
+      "name_template": null
+    },
+    {
+      "name": "黄金船",
+      "ocr_name": "黄金船",
+      "race": "宝冢纪念",
+      "avatar_template": "日常传奇赛事/头像/黄金船.png",
+      "name_template": null
+    },
+    {
+      "name": "玉藻十字",
+      "ocr_name": "玉藻十字",
+      "race": "宝冢纪念",
+      "avatar_template": "日常传奇赛事/头像/玉藻十字.png",
+      "name_template": null
+    },
+    {
+      "name": "名将怒涛",
+      "ocr_name": "名将怒涛",
+      "race": "宝冢纪念",
+      "avatar_template": "日常传奇赛事/头像/名将怒涛.png",
+      "name_template": null
+    },
+    {
+      "name": "丸善斯基",
+      "ocr_name": "丸善斯基",
+      "race": "朝日杯未来锦标赛",
+      "avatar_template": "日常传奇赛事/头像/丸善斯基.png",
+      "name_template": "日常传奇赛事/名字/丸善斯基.png",
+      "race_template": "日常传奇赛事/赛事/朝日杯未来锦标赛.png"
+    },
+    {
+      "name": "富士奇石",
+      "ocr_name": "富士奇石",
+      "race": "朝日杯未来锦标赛",
+      "avatar_template": "日常传奇赛事/头像/富士奇石.png",
+      "name_template": null
+    },
+    {
+      "name": "美浦波旁",
+      "ocr_name": "美浦波旁",
+      "race": "朝日杯未来锦标赛",
+      "avatar_template": "日常传奇赛事/头像/美浦波旁.png",
+      "name_template": null
+    },
+    {
+      "name": "待兼福来",
+      "ocr_name": "待兼福来",
+      "race": "菊花奖",
+      "avatar_template": "日常传奇赛事/头像/待兼福来.png",
+      "name_template": null
+    },
+    {
+      "name": "青云天空",
+      "ocr_name": "青云天空",
+      "race": "菊花奖",
+      "avatar_template": "日常传奇赛事/头像/青云天空.png",
+      "name_template": null
+    },
+    {
+      "name": "琵琶晨光",
+      "ocr_name": "琵琶晨光",
+      "race": "菊花奖",
+      "avatar_template": "日常传奇赛事/头像/琵琶晨光.png",
+      "name_template": null
+    },
+    {
+      "name": "气槽",
+      "ocr_name": "气槽",
+      "race": "天王奖（秋）",
+      "avatar_template": "日常传奇赛事/头像/气槽.png",
+      "name_template": null
+    },
+    {
+      "name": "荣进闪耀",
+      "ocr_name": "荣进闪耀",
+      "race": "天王奖（秋）",
+      "avatar_template": "日常传奇赛事/头像/荣进闪耀.png",
+      "name_template": null
+    },
+    {
+      "name": "爱丽数码",
+      "ocr_name": "爱丽数码",
+      "race": "天王奖（秋）",
+      "avatar_template": "日常传奇赛事/头像/爱丽数码.png",
+      "name_template": null
+    },
+    {
+      "name": "优秀素质",
+      "ocr_name": "优秀素质",
+      "race": "中山大奖赛",
+      "avatar_template": "日常传奇赛事/头像/优秀素质.png",
+      "name_template": null
+    },
+    {
+      "name": "草上飞",
+      "ocr_name": "草上飞",
+      "race": "中山大奖赛",
+      "avatar_template": "日常传奇赛事/头像/草上飞.png",
+      "name_template": null
+    },
+    {
+      "name": "小栗帽",
+      "ocr_name": "小栗帽",
+      "race": "中山大奖赛",
+      "avatar_template": "日常传奇赛事/头像/小栗帽.png",
+      "name_template": null
+    },
+    {
+      "name": "目白善信",
+      "ocr_name": "目白善信",
+      "race": "中山大奖赛",
+      "avatar_template": "日常传奇赛事/头像/目白善信.png",
+      "name_template": null
+    },
+    {
+      "name": "大和赤骥",
+      "ocr_name": "大和赤骥",
+      "race": "中山大奖赛",
+      "avatar_template": "日常传奇赛事/头像/大和赤骥.png",
+      "name_template": null
+    },
+    {
+      "name": "菱亚马逊",
+      "ocr_name": "菱亚马逊",
+      "race": "阪神初级少女杯赛",
+      "avatar_template": "日常传奇赛事/头像/菱亚马逊.png",
+      "name_template": null
+    },
+    {
+      "name": "目白多伯",
+      "ocr_name": "目白多伯",
+      "race": "阪神初级少女杯赛",
+      "avatar_template": "日常传奇赛事/头像/目白多伯.png",
+      "name_template": null
+    },
+    {
+      "name": "黄金城",
+      "ocr_name": "黄金城",
+      "race": "阪神初级少女杯赛",
+      "avatar_template": "日常传奇赛事/头像/黄金城.png",
+      "name_template": null
+    },
+    {
+      "name": "爱丽速子",
+      "ocr_name": "爱丽速子",
+      "race": "皋月奖",
+      "avatar_template": "日常传奇赛事/头像/爱丽速子.png",
+      "name_template": null
+    },
+    {
+      "name": "成田大进",
+      "ocr_name": "成田大进",
+      "race": "皋月奖",
+      "avatar_template": "日常传奇赛事/头像/成田大进.png",
+      "name_template": null
+    },
+    {
+      "name": "成田白仁",
+      "ocr_name": "成田白仁",
+      "race": "皋月奖",
+      "avatar_template": "日常传奇赛事/头像/成田白仁.png",
+      "name_template": null
+    },
+    {
+      "name": "美妙姿势",
+      "ocr_name": "美妙姿势",
+      "race": "秋华奖",
+      "avatar_template": "日常传奇赛事/头像/美妙姿势.png",
+      "name_template": null
+    },
+    {
+      "name": "川上公主",
+      "ocr_name": "川上公主",
+      "race": "秋华奖",
+      "avatar_template": "日常传奇赛事/头像/川上公主.png",
+      "name_template": null
+    }
+  ]
+}

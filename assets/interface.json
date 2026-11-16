@@ -1,35 +1,2036 @@
 {
   "interface_version": 2,
   "name": "MaaUma",
-  "description": "赛马娘自动化助手：进入主界面、社团签到、团队竞技场与日常赛事",
+  "description": "赛马娘自动化助手：进入主界面、社团签到、团队竞技场与日常赛事安排",
   "license": "MIT",
   "version": "0.1.0",
   "welcome": "请先补齐 docs/resource-placeholders.md 中的模板图和 OCR 文案。",
   "controller": [{"name": "Android 模拟器", "type": "Adb", "display_short_side": 720}],
   "resource": [{"name": "默认资源", "path": ["./resource"]}],
+  "agent": {
+    "child_exec": "./agent/.venv/Scripts/python.exe",
+    "child_args": ["-u", "./agent/main.py"]
+  },
   "task": [
     {"name": "进入主界面", "entry": "进入主界面"},
     {"name": "社团签到", "entry": "社团签到", "option": ["捐赠请求跑鞋"]},
     {"name": "团队竞技场", "entry": "团队竞技场"},
-    {"name": "日常赛事", "entry": "日常赛事", "option": ["日常赛事", "日常传奇赛事"]}
+    {"name": "日常赛事安排", "entry": "日常赛事", "option": ["日常赛事", "日常传奇赛事"]},
+    {
+      "name": "临时测试：传奇赛事选卡",
+      "entry": "临时测试_传奇赛事选卡",
+      "description": "请手动进入传奇赛事角色列表。先复位滑动三次、等待 1 秒，再查找目标；未找到则滑动 5 秒、等待 1 秒后重试，查找限时 50 秒。",
+      "option": ["日常传奇赛事"]
+    }
   ],
   "option": {
     "日常赛事": {
       "type": "select",
       "label": "日常赛事",
-      "description": "选择日常赛事类型。金币流程已接入到点击参赛；协助积分流程待补充。",
+      "description": "金币选择月光奖并筛选英里，协助积分选择木星杯并筛选中距离；两者均执行到参赛后关闭结果。日常传奇赛事流程待补充。",
       "default_case": "金币",
       "cases": [
-        {"name": "金币", "pipeline_override": {"日常赛事_点击日常赛事": {"next": ["日常赛事_金币_选择月光奖"]}}},
-        {"name": "协助积分", "pipeline_override": {"日常赛事_点击日常赛事": {"next": ["日常赛事_协助积分_待补充"]}}}
+        {
+          "name": "金币",
+          "pipeline_override": {
+            "日常赛事_点击日常赛事": {"next": ["日常赛事_金币_选择月光奖"]},
+            "日常赛事_筛选距离": {"recognition": {"type": "OCR", "param": {"expected": ["英里"]}}}
+          }
+        },
+        {
+          "name": "协助积分",
+          "pipeline_override": {
+            "日常赛事_点击日常赛事": {"next": ["日常赛事_协助积分_选择木星杯"]},
+            "日常赛事_筛选距离": {"recognition": {"type": "OCR", "param": {"expected": ["中距离"]}}}
+          }
+        }
       ]
     },
     "日常传奇赛事": {
       "type": "select",
       "label": "日常传奇赛事",
-      "description": "占位设置，选项与流程稍后补充，目前不执行传奇赛事操作。",
-      "default_case": "待补充",
-      "cases": [{"name": "待补充"}]
+      "description": "选择目标角色。头像分数达到 0.95 直接点击；0.85～0.95 时以同一卡片的名字或赛事任一项辅助校验。目前执行到选择卡片。",
+      "default_case": "神鹰",
+      "cases": [
+        {
+          "name": "神鹰",
+          "label": "神鹰",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "神\\s*鹰"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "全\\s*国\\s*杯"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "神鹰",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "特别周",
+          "label": "特别周",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "特\\s*别\\s*周"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "全\\s*国\\s*杯"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "特别周",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "鲁道夫象征",
+          "label": "鲁道夫象征",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "鲁\\s*道\\s*夫\\s*象\\s*征"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "全\\s*国\\s*杯"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "鲁道夫象征",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "帝王光辉",
+          "label": "帝王光辉",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "帝\\s*王\\s*光\\s*辉"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "短\\s*途\\s*者\\s*锦\\s*标\\s*赛"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "帝王光辉",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "大树快车",
+          "label": "大树快车",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "大\\s*树\\s*快\\s*车"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "短\\s*途\\s*者\\s*锦\\s*标\\s*赛"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "大树快车",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "樱花进王",
+          "label": "樱花进王",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "樱\\s*花\\s*进\\s*王"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "短\\s*途\\s*者\\s*锦\\s*标\\s*赛"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "樱花进王",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "真机伶",
+          "label": "真机伶",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "真\\s*机\\s*伶"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "短\\s*途\\s*者\\s*锦\\s*标\\s*赛"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "真机伶",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "西野花",
+          "label": "西野花",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "西\\s*野\\s*花"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "短\\s*途\\s*者\\s*锦\\s*标\\s*赛"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "西野花",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "菱曙",
+          "label": "菱曙",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "菱\\s*曙"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "短\\s*途\\s*者\\s*锦\\s*标\\s*赛"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "菱曙",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "胜利奖券",
+          "label": "胜利奖券",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "胜\\s*利\\s*奖\\s*券"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "全\\s*国\\s*德\\s*比"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "胜利奖券",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "伏特加",
+          "label": "伏特加",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "伏\\s*特\\s*加"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "全\\s*国\\s*德\\s*比"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "伏特加",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "东海帝王",
+          "label": "东海帝王",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "东\\s*海\\s*帝\\s*王"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "全\\s*国\\s*德\\s*比"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "东海帝王",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "重炮",
+          "label": "重炮",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "重\\s*炮"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "天\\s*王\\s*奖\\s*（\\s*春\\s*）"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "重炮",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "目白麦昆[优雅曲线]",
+          "label": "目白麦昆[优雅曲线]",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "目\\s*白\\s*麦\\s*昆"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "天\\s*王\\s*奖\\s*（\\s*春\\s*）"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "目白麦昆[优雅曲线]",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "好歌剧",
+          "label": "好歌剧",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "好\\s*歌\\s*剧"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "天\\s*王\\s*奖\\s*（\\s*春\\s*）"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "好歌剧",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "超级溪流",
+          "label": "超级溪流",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "超\\s*级\\s*溪\\s*流"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "天\\s*王\\s*奖\\s*（\\s*春\\s*）"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "超级溪流",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "目白麦昆[天际尽头]",
+          "label": "目白麦昆[天际尽头]",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "目\\s*白\\s*麦\\s*昆"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "天\\s*王\\s*奖\\s*（\\s*春\\s*）"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "目白麦昆[天际尽头]",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "米浴",
+          "label": "米浴",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "米\\s*浴"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "天\\s*王\\s*奖\\s*（\\s*春\\s*）"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "米浴",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "目白光明",
+          "label": "目白光明",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "目\\s*白\\s*光\\s*明"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "天\\s*王\\s*奖\\s*（\\s*春\\s*）"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "目白光明",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "目白莱恩",
+          "label": "目白莱恩",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "目\\s*白\\s*莱\\s*恩"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "宝\\s*冢\\s*纪\\s*念"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "目白莱恩",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "无声铃鹿",
+          "label": "无声铃鹿",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "无\\s*声\\s*铃\\s*鹿"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "宝\\s*冢\\s*纪\\s*念"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "无声铃鹿",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "黄金船",
+          "label": "黄金船",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "黄\\s*金\\s*船"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "宝\\s*冢\\s*纪\\s*念"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "黄金船",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "玉藻十字",
+          "label": "玉藻十字",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "玉\\s*藻\\s*十\\s*字"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "宝\\s*冢\\s*纪\\s*念"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "玉藻十字",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "名将怒涛",
+          "label": "名将怒涛",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "名\\s*将\\s*怒\\s*涛"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "宝\\s*冢\\s*纪\\s*念"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "名将怒涛",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "丸善斯基",
+          "label": "丸善斯基",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "丸\\s*善\\s*斯\\s*基"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "朝\\s*日\\s*杯\\s*未\\s*来\\s*锦\\s*标\\s*赛"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "丸善斯基",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "富士奇石",
+          "label": "富士奇石",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "富\\s*士\\s*奇\\s*石"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "朝\\s*日\\s*杯\\s*未\\s*来\\s*锦\\s*标\\s*赛"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "富士奇石",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "美浦波旁",
+          "label": "美浦波旁",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "美\\s*浦\\s*波\\s*旁"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "朝\\s*日\\s*杯\\s*未\\s*来\\s*锦\\s*标\\s*赛"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "美浦波旁",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "待兼福来",
+          "label": "待兼福来",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "待\\s*兼\\s*福\\s*来"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "菊\\s*花\\s*奖"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "待兼福来",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "青云天空",
+          "label": "青云天空",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "青\\s*云\\s*天\\s*空"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "菊\\s*花\\s*奖"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "青云天空",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "琵琶晨光",
+          "label": "琵琶晨光",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "琵\\s*琶\\s*晨\\s*光"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "菊\\s*花\\s*奖"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "琵琶晨光",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "气槽",
+          "label": "气槽",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "气\\s*槽"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "天\\s*王\\s*奖\\s*（\\s*秋\\s*）"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "气槽",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "荣进闪耀",
+          "label": "荣进闪耀",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "荣\\s*进\\s*闪\\s*耀"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "天\\s*王\\s*奖\\s*（\\s*秋\\s*）"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "荣进闪耀",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "爱丽数码",
+          "label": "爱丽数码",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "爱\\s*丽\\s*数\\s*码"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "天\\s*王\\s*奖\\s*（\\s*秋\\s*）"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "爱丽数码",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "优秀素质",
+          "label": "优秀素质",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "优\\s*秀\\s*素\\s*质"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "中\\s*山\\s*大\\s*奖\\s*赛"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "优秀素质",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "草上飞",
+          "label": "草上飞",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "草\\s*上\\s*飞"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "中\\s*山\\s*大\\s*奖\\s*赛"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "草上飞",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "小栗帽",
+          "label": "小栗帽",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "小\\s*栗\\s*帽"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "中\\s*山\\s*大\\s*奖\\s*赛"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "小栗帽",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "目白善信",
+          "label": "目白善信",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "目\\s*白\\s*善\\s*信"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "中\\s*山\\s*大\\s*奖\\s*赛"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "目白善信",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "大和赤骥",
+          "label": "大和赤骥",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "大\\s*和\\s*赤\\s*骥"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "中\\s*山\\s*大\\s*奖\\s*赛"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "大和赤骥",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "菱亚马逊",
+          "label": "菱亚马逊",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "菱\\s*亚\\s*马\\s*逊"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "阪\\s*神\\s*初\\s*级\\s*少\\s*女\\s*杯\\s*赛"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "菱亚马逊",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "目白多伯",
+          "label": "目白多伯",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "目\\s*白\\s*多\\s*伯"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "阪\\s*神\\s*初\\s*级\\s*少\\s*女\\s*杯\\s*赛"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "目白多伯",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "黄金城",
+          "label": "黄金城",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "黄\\s*金\\s*城"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "阪\\s*神\\s*初\\s*级\\s*少\\s*女\\s*杯\\s*赛"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "黄金城",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "爱丽速子",
+          "label": "爱丽速子",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "爱\\s*丽\\s*速\\s*子"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "皋\\s*月\\s*奖"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "爱丽速子",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "成田大进",
+          "label": "成田大进",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "成\\s*田\\s*大\\s*进"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "皋\\s*月\\s*奖"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "成田大进",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "成田白仁",
+          "label": "成田白仁",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "成\\s*田\\s*白\\s*仁"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "皋\\s*月\\s*奖"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "成田白仁",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "美妙姿势",
+          "label": "美妙姿势",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "美\\s*妙\\s*姿\\s*势"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "秋\\s*华\\s*奖"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "美妙姿势",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "川上公主",
+          "label": "川上公主",
+          "pipeline_override": {
+            "日常传奇赛事_角色名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "川\\s*上\\s*公\\s*主"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_赛事名字校验": {
+              "recognition": {
+                "type": "OCR",
+                "param": {
+                  "expected": [
+                    "秋\\s*华\\s*奖"
+                  ]
+                }
+              }
+            },
+            "日常传奇赛事_查找并选择卡片": {
+              "action": {
+                "type": "Custom",
+                "param": {
+                  "custom_action": "DailyLegendSelectCard",
+                  "custom_action_param": {
+                    "character": "川上公主",
+                    "avatar_node": "日常传奇赛事_头像候选",
+                    "name_node": "日常传奇赛事_角色名字校验",
+                    "race_node": "日常传奇赛事_赛事名字校验",
+                    "click_node": "日常传奇赛事_点击已校验卡片",
+                    "swipe_node": "日常传奇赛事_滑动列表",
+                    "timeout_ms": 50000
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
     },
     "捐赠请求跑鞋": {
       "type": "select",
@@ -37,11 +2038,11 @@
       "description": "选择社团捐赠请求的跑鞋种类，每次只选择一种。默认短距离跑鞋。",
       "default_case": "短距离跑鞋",
       "cases": [
-        {"name": "短距离跑鞋", "pipeline_override": {"社团_选择用户请求": {"recognition": {"type": "OCR", "param": {"expected": ["短距离跑鞋"]}}}}},
-        {"name": "英里跑鞋", "pipeline_override": {"社团_选择用户请求": {"recognition": {"type": "OCR", "param": {"expected": ["英里跑鞋"]}}}}},
-        {"name": "中距离跑鞋", "pipeline_override": {"社团_选择用户请求": {"recognition": {"type": "OCR", "param": {"expected": ["中距离跑鞋"]}}}}},
-        {"name": "长距离跑鞋", "pipeline_override": {"社团_选择用户请求": {"recognition": {"type": "OCR", "param": {"expected": ["长距离跑鞋"]}}}}},
-        {"name": "泥地跑鞋", "pipeline_override": {"社团_选择用户请求": {"recognition": {"type": "OCR", "param": {"expected": ["泥地跑鞋"]}}}}}
+        {"name": "短距离跑鞋", "pipeline_override": {"社团_用户所选跑鞋文字": {"recognition": {"type": "OCR", "param": {"expected": ["短距离跑鞋"]}}}}},
+        {"name": "英里跑鞋", "pipeline_override": {"社团_用户所选跑鞋文字": {"recognition": {"type": "OCR", "param": {"expected": ["英里跑鞋"]}}}}},
+        {"name": "中距离跑鞋", "pipeline_override": {"社团_用户所选跑鞋文字": {"recognition": {"type": "OCR", "param": {"expected": ["中距离跑鞋"]}}}}},
+        {"name": "长距离跑鞋", "pipeline_override": {"社团_用户所选跑鞋文字": {"recognition": {"type": "OCR", "param": {"expected": ["长距离跑鞋"]}}}}},
+        {"name": "泥地跑鞋", "pipeline_override": {"社团_用户所选跑鞋文字": {"recognition": {"type": "OCR", "param": {"expected": ["泥地跑鞋"]}}}}}
       ]
     }
   }

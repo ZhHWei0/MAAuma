@@ -22,11 +22,27 @@
     "recognition": {"type": "OCR", "param": {"expected": ["月光奖"], "roi": [233, 617, 137, 73]}},
     "action": {"type": "Click"},
     "post_delay": 1000,
-    "next": ["日常赛事_金币_点击赛事"]
+    "next": ["日常赛事_点击赛事"]
   },
-  "日常赛事_金币_点击赛事": {
+  "日常赛事_协助积分_选择木星杯": {
+    "recognition": {"type": "OCR", "param": {"expected": ["木星杯"], "roi": [228, 745, 159, 108]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["日常赛事_点击赛事"]
+  },
+  "日常赛事_点击赛事": {
     "action": {"type": "Click", "param": {"target": [430, 690, 1, 1]}},
-    "next": ["日常赛事_多次参赛已开启", "日常赛事_开启多次参赛"]
+    "post_delay": 1000,
+    "next": ["日常赛事_入场券不足", "日常赛事_多次参赛已开启", "日常赛事_开启多次参赛"]
+  },
+  "日常赛事_入场券不足": {
+    "recognition": {"type": "OCR", "param": {"expected": ["日常赛事\\s*入场券不足"], "roi": [189, 560, 314, 82]}},
+    "next": ["日常赛事_取消入场券不足"]
+  },
+  "日常赛事_取消入场券不足": {
+    "recognition": {"type": "OCR", "param": {"expected": ["取消"], "roi": [57, 795, 286, 75]}},
+    "action": {"type": "Click"},
+    "next": ["日常赛事_日常部分完成"]
   },
   "日常赛事_多次参赛已开启": {
     "recognition": {"type": "OCR", "param": {"expected": ["多次参赛\\s*[：:]\\s*开"], "roi": [242, 1044, 236, 99]}},
@@ -40,10 +56,106 @@
   "日常赛事_点击参赛": {
     "recognition": {"type": "OCR", "param": {"expected": ["^\\s*参赛\\s*[！!]?\\s*$"], "roi": [380, 1147, 276, 70]}},
     "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["日常赛事_打开排序筛选"]
+  },
+  "日常赛事_打开排序筛选": {
+    "action": {"type": "Click", "param": {"target": [495, 991, 1, 1]}},
+    "next": ["日常赛事_选择评价排序"]
+  },
+  "日常赛事_选择评价排序": {
+    "recognition": {"type": "OCR", "param": {"expected": ["评价"], "roi": [16, 228, 186, 89]}},
+    "action": {"type": "Click"},
+    "next": ["日常赛事_打开筛选"]
+  },
+  "日常赛事_打开筛选": {
+    "recognition": {"type": "OCR", "param": {"expected": ["筛选"], "roi": [461, 106, 142, 65]}},
+    "action": {"type": "Click"},
+    "next": ["日常赛事_重置筛选项"]
+  },
+  "日常赛事_重置筛选项": {
+    "recognition": {"type": "OCR", "param": {"expected": ["重置筛选项"], "roi": [452, 1045, 158, 36]}},
+    "action": {"type": "Click"},
+    "next": ["日常赛事_筛选距离"]
+  },
+  "日常赛事_筛选距离": {
+    "recognition": {"type": "OCR", "param": {"expected": ["英里"], "roi": [36, 368, 629, 175]}},
+    "action": {"type": "Click"},
+    "next": ["日常赛事_确认筛选"]
+  },
+  "日常赛事_确认筛选": {
+    "recognition": {"type": "OCR", "param": {"expected": ["确定"], "roi": [378, 1145, 285, 76]}},
+    "action": {"type": "Click"},
+    "next": ["日常赛事_已按降序排列", "日常赛事_切换为降序"]
+  },
+  "日常赛事_已按降序排列": {
+    "recognition": {"type": "OCR", "param": {"expected": ["降序"], "roi": [573, 958, 120, 68]}},
+    "next": ["日常赛事_预先滑动三次"]
+  },
+  "日常赛事_切换为降序": {
+    "recognition": {"type": "OCR", "param": {"expected": ["升序"], "roi": [573, 958, 120, 68]}},
+    "action": {"type": "Click"},
+    "next": ["日常赛事_已按降序排列"]
+  },
+  "日常赛事_预先滑动三次": {
+    "action": {"type": "Swipe", "param": {"begin": [344, 690], "end": [336, 1243], "duration": 1000}},
+    "repeat": 3,
+    "post_delay": 1000,
+    "next": ["日常赛事_比较数字并选择"]
+  },
+  "日常赛事_比较数字并选择": {
+    "action": {
+      "type": "Custom",
+      "param": {
+        "custom_action": "DailyRaceSelectStableNumber",
+        "custom_action_param": {
+          "ocr_node": "日常赛事_读取列表数字",
+          "swipe_node": "日常赛事_再次滑动并等待",
+          "click_node": "日常赛事_数字稳定后点击固定位置",
+          "timeout_ms": 10000
+        }
+      }
+    },
+    "next": ["日常赛事_确认选择"]
+  },
+  "日常赛事_读取列表数字": {
+    "recognition": {"type": "OCR", "param": {"expected": ["^\\s*[0-9０-９][0-9０-９,，\\s]*$"], "roi": [1, 633, 157, 176]}},
     "next": []
   },
-  "日常赛事_协助积分_待补充": {
-    "recognition": {"type": "OCR", "param": {"expected": ["TODO_协助积分赛事入口文案"]}},
+  "日常赛事_再次滑动并等待": {
+    "action": {"type": "Swipe", "param": {"begin": [344, 690], "end": [336, 1243], "duration": 1000}},
+    "post_delay": 1000,
     "next": []
+  },
+  "日常赛事_数字稳定后点击固定位置": {
+    "action": {"type": "Click", "param": {"target": [85, 731, 1, 1]}},
+    "pre_delay": 0,
+    "post_delay": 0,
+    "next": []
+  },
+  "日常赛事_确认选择": {
+    "recognition": {"type": "OCR", "param": {"expected": ["确定"], "roi": [219, 1045, 286, 66]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["日常赛事_固定位置点击三次"]
+  },
+  "日常赛事_固定位置点击三次": {
+    "action": {"type": "Click", "param": {"target": [522, 650, 1, 1]}},
+    "repeat": 3,
+    "next": ["日常赛事_确认参赛"]
+  },
+  "日常赛事_确认参赛": {
+    "recognition": {"type": "OCR", "param": {"expected": ["^\\s*参赛\\s*[！!]?\\s*$"], "roi": [375, 801, 283, 69]}},
+    "action": {"type": "Click"},
+    "post_delay": 5000,
+    "next": ["日常赛事_关闭比赛结果"]
+  },
+  "日常赛事_关闭比赛结果": {
+    "recognition": {"type": "OCR", "param": {"expected": ["关闭"], "roi": [221, 1141, 279, 83]}},
+    "action": {"type": "Click"},
+    "next": ["日常赛事_日常部分完成"]
+  },
+  "日常赛事_日常部分完成": {
+    "next": ["日常传奇赛事_点击赛事入口"]
   }
 }

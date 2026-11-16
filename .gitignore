@@ -11,3 +11,5 @@ desktop.ini
 assets/resource/model/ocr/*.onnx
 assets/resource/model/ocr/keys.txt
 assets/resource/image/_runtime/
+assets/agent/.venv/
+__pycache__/
