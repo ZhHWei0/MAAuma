@@ -4,6 +4,7 @@
 /logs/
 /debug/
 *.log
+/.vs/
 .vscode/
 .idea/
 Thumbs.db
