@@ -1,0 +1,58 @@
+name: Build Windows package
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build and verify Windows x64 ZIP
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF_TYPE -eq 'tag') {
+            python -X utf8 scripts/build-release.py --version $env:GITHUB_REF_NAME
+          } else {
+            python -X utf8 scripts/build-release.py
+          }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MaaUma-win-x64
+          path: |
+            dist/MaaUma-*-win-x64.zip
+            dist/MaaUma-*-win-x64.zip.sha256
+          if-no-files-found: error
+          compression-level: 0
+
+  draft-release:
+    if: github.ref_type == 'tag'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: MaaUma-win-x64
+          path: dist
+      - name: Prepare draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          flags=()
+          if [[ "$GITHUB_REF_NAME" == *-* ]]; then flags+=(--prerelease); fi
+          gh release create "$GITHUB_REF_NAME" dist/*.zip dist/*.zip.sha256 \
+            --verify-tag --draft "${flags[@]}" --title "MaaUma $GITHUB_REF_NAME" \
+            --notes "下载 MaaUma Windows x64 ZIP，完整解压后运行 Start MaaUma.cmd。包内已包含前端、运行时、OCR 模型与任务资源。前端使用 [MFAAvalonia v2.15.2 原版及对应源码](https://github.com/MaaXYZ/MFAAvalonia/releases/tag/v2.15.2)。"

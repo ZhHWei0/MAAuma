@@ -4,7 +4,7 @@
   "description": "赛马娘自动化助手：进入主界面、社团签到、团队竞技场、日常赛事安排、限时售卖购买与领取奖励",
   "license": "MIT",
   "version": "0.1.0",
-  "welcome": "请先补齐 docs/resource-placeholders.md 中的模板图和 OCR 文案。",
+  "welcome": "欢迎使用 MaaUma。连接 Android 模拟器，选择需要执行的日常任务；首次使用建议先运行“进入主界面”。",
   "controller": [{"name": "Android 模拟器", "type": "Adb", "display_short_side": 720}],
   "resource": [{"name": "默认资源", "path": ["./resource"]}],
   "agent": {

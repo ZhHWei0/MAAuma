@@ -1,0 +1,14 @@
+{
+  "mfa-win.zip": ["https://github.com/MaaXYZ/MFAAvalonia/releases/download/v2.15.2/MFAAvalonia-v2.15.2-win-x64.zip", "sha256:1c53e839c023595068521228d3d2ab2334d57325a7ea0412e087bb0797cc0a22"],
+  "dotnet-runtime.zip": ["https://builds.dotnet.microsoft.com/dotnet/Runtime/10.0.15/dotnet-runtime-10.0.15-win-x64.zip", "sha512:06f0bedd59ae4ac722ada805a6d6bbf605bcdc790c71f59b7003878072902b5cde5dec8c40c0baa81192660d4748e9d79afdbdcb0c0ea9d6b821d0a044c4c6dd"],
+  "python-3.12.10-embed-amd64.zip": ["https://www.python.org/ftp/python/3.12.10/python-3.12.10-embed-amd64.zip", "sha256:4acbed6dd1c744b0376e3b1cf57ce906f9dc9e95e68824584c8099a63025a3c3"],
+  "maafw-5.12.2-py3-none-win_amd64.whl": ["https://files.pythonhosted.org/packages/80/11/cf4971e4c5cb2a6cd615f0480a498c75653bbb8e15b107fba379c7b67e6c/maafw-5.12.2-py3-none-win_amd64.whl", "sha256:2b3f9426536529021ad6a91af93cd44b8c647d1862ea2217689c052d7a7615f0"],
+  "MaaAgentBinary-1.0.1-py3-none-any.whl": ["https://files.pythonhosted.org/packages/b9/89/6b173d2e151517a8a24c3194bc8783643f49186547ae53c8b635be19d310/MaaAgentBinary-1.0.1-py3-none-any.whl", "sha256:d97bcc9f35b52add199b287932511ecfcddcb83930c6b532d1c7010b432ec8bf"],
+  "numpy-2.5.5-cp312-cp312-win_amd64.whl": ["https://files.pythonhosted.org/packages/d1/71/b1ce51834c21020d189332979d38ba7350eb6cd7ca8c8ec424a663b0ca6f/numpy-2.5.5-cp312-cp312-win_amd64.whl", "sha256:919eb420662b0b4ba34889df503f3d5329775b0c1d5f7e5f5af4fba8315b1e30"],
+  "strenum-0.5.0-py3-none-any.whl": ["https://files.pythonhosted.org/packages/04/94/598975013306c83df1820bf6cf7424da43c98eff190d528b733be615e8c6/strenum-0.5.0-py3-none-any.whl", "sha256:f23a35daa03c948885d616463f75ebb0f179cb13acd17c3ac3b2394bfc343967"],
+  "det.onnx": ["https://raw.githubusercontent.com/MaaXYZ/MaaCommonAssets/dabcd4681ac990dc4361de26416d986abd80e4aa/OCR/ppocr_v4/zh_cn/det.onnx", "sha256:767e663dded50813dca0abc9a49859e345e0f74a48b387661188f096a9211d74"],
+  "rec.onnx": ["https://raw.githubusercontent.com/MaaXYZ/MaaCommonAssets/dabcd4681ac990dc4361de26416d986abd80e4aa/OCR/ppocr_v4/zh_cn/rec.onnx", "sha256:da4815ea386ee8083be319da8d20e70f4fdb0b6404ba0d2da7f675831e1b37fa"],
+  "keys.txt": ["https://raw.githubusercontent.com/MaaXYZ/MaaCommonAssets/dabcd4681ac990dc4361de26416d986abd80e4aa/OCR/ppocr_v4/zh_cn/keys.txt", "sha256:28b2362ad4ab2dc38769aa72feb535e3a9ddb3fd2a7585a05920e6393b1dc7f7"],
+  "MaaCommonAssets-LICENSE.txt": ["https://raw.githubusercontent.com/MaaXYZ/MaaCommonAssets/dabcd4681ac990dc4361de26416d986abd80e4aa/LICENSE", "sha256:2f8ab70ffd1bd53863a27835be02757a657de693e2a2aef9111dbbfa2c5737f0"],
+  "MFAAvalonia-LICENSE.txt": ["https://raw.githubusercontent.com/MaaXYZ/MFAAvalonia/v2.15.2/LICENSE", "sha256:3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"]
+}
