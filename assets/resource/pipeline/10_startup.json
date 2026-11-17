@@ -5,7 +5,7 @@
     "timeout": 180000
   },
   "进入_跳过动画": {
-    "recognition": {"type": "TemplateMatch", "param": {"template": ["启动/跳过按钮.png"], "roi": [507, 1083, 213, 197], "threshold": 0.85}},
+    "recognition": {"type": "TemplateMatch", "param": {"template": ["启动/跳过按钮.png"], "roi": [507, 1083, 213, 197], "green_mask": true, "threshold": 0.85}},
     "action": {"type": "Click"},
     "next": ["进入_跳过动画", "进入_更新确认", "进入_签到奖励", "进入_公告弹窗", "进入_识别主页", "进入_点击开始"],
     "post_delay": 1000,

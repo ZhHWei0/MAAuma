@@ -1,0 +1,68 @@
+{
+  "领取奖励": {
+    "next": ["领取奖励_奖励箱分支"]
+  },
+  "领取奖励_奖励箱分支": {
+    "next": ["领取奖励_奖励箱返回主页"],
+    "timeout": 120000
+  },
+  "领取奖励_奖励箱返回主页": {
+    "recognition": {"type": "And", "param": {"all_of": ["回到主界面"]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["领取奖励_点击奖励箱"]
+  },
+  "领取奖励_点击奖励箱": {
+    "recognition": {"type": "TemplateMatch", "param": {
+      "template": ["奖励/礼物箱图标.png"],
+      "roi": [583, 763, 137, 201],
+      "green_mask": true,
+      "threshold": 0.85
+    }},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["领取奖励_奖励箱一键领取"]
+  },
+  "领取奖励_奖励箱一键领取": {
+    "recognition": {"type": "OCR", "param": {"expected": ["一\\s*键\\s*领\\s*取"], "roi": [382, 1147, 276, 75]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["领取奖励_关闭奖励箱"]
+  },
+  "领取奖励_关闭奖励箱": {
+    "recognition": {"type": "OCR", "param": {"expected": ["关\\s*闭"], "roi": [63, 1150, 260, 67]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["领取奖励_任务奖励分支"]
+  },
+  "领取奖励_任务奖励分支": {
+    "next": ["领取奖励_任务返回主页"],
+    "timeout": 120000
+  },
+  "领取奖励_任务返回主页": {
+    "recognition": {"type": "And", "param": {"all_of": ["回到主界面"]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["领取奖励_点击任务图标"]
+  },
+  "领取奖励_点击任务图标": {
+    "recognition": {"type": "TemplateMatch", "param": {
+      "template": ["奖励/任务图标.png"],
+      "roi": [583, 763, 137, 201],
+      "green_mask": true,
+      "threshold": 0.85
+    }},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["领取奖励_任务一键领取"]
+  },
+  "领取奖励_任务一键领取": {
+    "recognition": {"type": "OCR", "param": {"expected": ["一\\s*键\\s*领\\s*取"], "roi": [229, 1043, 260, 76]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["领取奖励_完成"]
+  },
+  "领取奖励_完成": {
+    "next": []
+  }
+}

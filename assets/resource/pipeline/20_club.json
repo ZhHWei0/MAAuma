@@ -12,7 +12,7 @@
       "param": {
         "any_of": [
           {"recognition": {"type": "OCR", "param": {"expected": ["社团"], "roi": [0, 1034, 131, 126]}}},
-          {"recognition": {"type": "TemplateMatch", "param": {"template": ["社团/社团图标.png"], "roi": [0, 1034, 131, 126], "threshold": 0.85}}}
+          {"recognition": {"type": "TemplateMatch", "param": {"template": ["社团/社团图标.png"], "roi": [0, 1034, 131, 126], "green_mask": true, "threshold": 0.85}}}
         ]
       }
     },
@@ -29,7 +29,7 @@
   },
   "社团_请求分支": {"next": ["社团_上次请求未结束", "社团_处理上次请求", "社团_可发起捐献请求"]},
   "社团_可发起捐献请求": {
-    "recognition": {"type": "TemplateMatch", "param": {"template": ["社团/捐赠请求图标.png"], "roi": [53, 1043, 124, 103], "threshold": 0.80}},
+    "recognition": {"type": "TemplateMatch", "param": {"template": ["社团/捐赠请求图标.png"], "roi": [53, 1043, 124, 103], "green_mask": true, "threshold": 0.80}},
     "action": {"type": "Click"},
     "post_delay": 1000,
     "next": ["社团_上次请求未结束", "社团_处理上次请求", "社团_选择用户请求"]

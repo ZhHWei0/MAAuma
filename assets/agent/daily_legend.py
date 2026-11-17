@@ -30,6 +30,54 @@ def compact(text):
     return "".join(c for c in unicodedata.normalize("NFKC", text) if c.isalnum())
 
 
+def race_filter_from_text(readings):
+    text = "".join(compact(value) for value in readings)
+    distances = [value for value in ("短距离", "长距离", "英里", "中距离") if value in text]
+    return distances[0] if len(distances) == 1 else None
+
+
+@AgentServer.custom_action("DailyLegendConfigureRaceFilter")
+class DailyLegendConfigureRaceFilter(CustomAction):
+    def run(self, context: Context, argv: CustomAction.RunArg) -> bool:
+        try:
+            params = json.loads(argv.custom_action_param)
+            deadline = time.monotonic() + params["timeout_ms"] / 1000
+
+            def running():
+                return not context.tasker.stopping and time.monotonic() < deadline
+
+            while running():
+                job = context.tasker.controller.post_screencap().wait()
+                if not job.succeeded or not running():
+                    return False
+                image = job.get()
+                for only_rec in (False, True):
+                    if not running():
+                        return False
+                    detail = context.run_recognition(params["ocr_node"], image, {
+                        params["ocr_node"]: {"recognition": {"type": "OCR", "param": {
+                            "expected": [], "only_rec": only_rec, "order_by": "Horizontal",
+                        }}}
+                    })
+                    readings = [result.text for result in detail.filtered_results] if detail and detail.hit else []
+                    race_filter = race_filter_from_text(readings)
+                    LOG.info("Legend race type: readings=%s filter=%s only_rec=%s", readings, race_filter, only_rec)
+                    if not running():
+                        return False
+                    if race_filter:
+                        expected = "\\s*".join(race_filter)
+                        return context.override_pipeline({params["filter_node"]: {
+                            "recognition": {"type": "OCR", "param": {"expected": [expected]}},
+                        }})
+                if not wait_while_running(0.5, running):
+                    break
+            LOG.error("Legend race type missing or ambiguous; entry was not clicked")
+            return False
+        except Exception:
+            LOG.exception("Legend race type configuration failed")
+            return False
+
+
 def relative_roi(box, offset, bounds):
     x, y = box[:2]
     dx, dy, width, height = offset

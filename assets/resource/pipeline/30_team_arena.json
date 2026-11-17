@@ -1,8 +1,157 @@
 {
-  "团队竞技场": {"next": ["团队竞技场_待补充"]},
-  "团队竞技场_待补充": {
-    "recognition": {"type": "OCR", "param": {"expected": ["TODO_团队竞技场流程入口文案"]}},
+  "团队竞技场": {
+    "next": ["团队竞技场_点击赛事入口"],
+    "timeout": 120000
+  },
+  "团队竞技场_点击赛事入口": {
+    "recognition": {"type": "And", "param": {"all_of": ["主界面_已到达"]}},
+    "action": {"type": "Click", "param": {"target": [523, 1223, 1, 2]}},
+    "post_delay": 1000,
+    "next": ["团队竞技场_点击团队竞技场"]
+  },
+  "团队竞技场_点击团队竞技场": {
+    "recognition": {"type": "OCR", "param": {"expected": ["团队\\s*竞技场"], "roi": [80, 887, 259, 58]}},
     "action": {"type": "Click"},
+    "next": ["团队竞技场_点击团队赛事"]
+  },
+  "团队竞技场_点击团队赛事": {
+    "recognition": {"type": "OCR", "param": {"expected": ["团队\\s*赛事"], "roi": [126, 745, 471, 132]}},
+    "action": {"type": "Click"},
+    "post_delay": 2000,
+    "timeout": 3000,
+    "rate_limit": 200,
+    "next": ["团队竞技场_首次进入竞技值不足"],
+    "on_error": ["团队竞技场_选择对手"]
+  },
+  "团队竞技场_首次进入竞技值不足": {
+    "recognition": {"type": "And", "param": {"all_of": ["团队竞技场_竞技值不足"]}},
+    "next": ["团队竞技场_首次进入拒绝补充竞技值"]
+  },
+  "团队竞技场_首次进入拒绝补充竞技值": {
+    "recognition": {"type": "And", "param": {"all_of": ["团队竞技场_拒绝补充竞技值"]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["团队竞技场_首次进入竞技值不足退出"]
+  },
+  "团队竞技场_首次进入竞技值不足退出": {
+    "action": {"type": "Click", "param": {"target": [496, 1197, 1, 1]}},
+    "post_delay": 1000,
     "next": []
+  },
+  "团队竞技场_选择对手": {
+    "action": {"type": "Click", "param": {"target": [363, 349, 1, 1]}},
+    "next": ["团队竞技场_选择对手后继续"]
+  },
+  "团队竞技场_选择对手后继续": {
+    "recognition": {"type": "OCR", "param": {"expected": ["继\\s*续"], "roi": [222, 1043, 274, 78]}},
+    "action": {"type": "Click"},
+    "next": ["团队竞技场_确认参赛"]
+  },
+  "团队竞技场_确认参赛": {
+    "recognition": {"type": "OCR", "param": {"expected": ["参赛"], "roi": [381, 863, 261, 100]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["团队竞技场_缩短版已开启", "团队竞技场_开启缩短版"]
+  },
+  "团队竞技场_缩短版已开启": {
+    "recognition": {"type": "OCR", "param": {"expected": ["缩短版\\s*[：:]\\s*开"], "roi": [278, 1039, 164, 55]}},
+    "next": ["团队竞技场_查看各赛事结果"]
+  },
+  "团队竞技场_开启缩短版": {
+    "recognition": {"type": "OCR", "param": {"expected": ["缩短版\\s*[：:]\\s*关"], "roi": [278, 1039, 164, 55]}},
+    "action": {"type": "Click"},
+    "next": ["团队竞技场_缩短版已开启"]
+  },
+  "团队竞技场_查看各赛事结果": {
+    "recognition": {"type": "OCR", "param": {"expected": ["查看\\s*各赛事\\s*结果"], "roi": [213, 1128, 289, 113]}},
+    "action": {"type": "Click"},
+    "post_delay": 1500,
+    "next": ["团队竞技场_固定位置跳过结果动画"]
+  },
+  "团队竞技场_固定位置跳过结果动画": {
+    "action": {"type": "Click", "param": {"target": [658, 1166, 1, 1]}},
+    "post_delay": 1000,
+    "next": ["团队竞技场_结果页继续", "团队竞技场_跳过结果动画"]
+  },
+  "团队竞技场_跳过结果动画": {
+    "recognition": {"type": "TemplateMatch", "param": {
+      "template": ["启动/跳过按钮.png"], "roi": [583, 1100, 137, 136], "green_mask": true, "threshold": 0.85
+    }},
+    "action": {"type": "Click", "param": {"target": [658, 1166, 1, 1]}},
+    "post_delay": 1000,
+    "next": ["团队竞技场_结果页继续", "团队竞技场_跳过结果动画"]
+  },
+  "团队竞技场_结果页继续": {
+    "recognition": {"type": "OCR", "param": {"expected": ["继\\s*续"], "roi": [220, 1076, 284, 81]}},
+    "action": {"type": "Click"},
+    "next": ["团队竞技场_单次比赛结束检查"]
+  },
+  "团队竞技场_单次比赛结束检查": {
+    "post_delay": 2000,
+    "next": ["[JumpBack]通用_检测限时售卖弹窗", "团队竞技场_等待识别下一步"]
+  },
+  "团队竞技场_等待识别下一步": {
+    "timeout": 3000,
+    "rate_limit": 200,
+    "next": ["[JumpBack]通用_检测限时售卖弹窗", "团队竞技场_识别下一步", "团队竞技场_直接识别下一步", "团队竞技场_奖励弹窗继续", "团队竞技场_再次参赛"],
+    "on_error": ["团队竞技场_点击下一步备用位置"]
+  },
+  "团队竞技场_识别下一步": {
+    "recognition": {"type": "OCR", "param": {"expected": ["下\\s*一\\s*步"], "roi": [297, 1196, 128, 35]}},
+    "action": {"type": "Click"},
+    "next": ["团队竞技场_检查奖励弹窗"]
+  },
+  "团队竞技场_点击下一步备用位置": {
+    "action": {"type": "Click", "param": {"target": [355, 1186, 1, 1]}},
+    "next": ["团队竞技场_检查奖励弹窗"]
+  },
+  "团队竞技场_直接识别下一步": {
+    "recognition": {"type": "OCR", "param": {"expected": ["下\\s*一\\s*步"], "roi": [297, 1196, 128, 35], "only_rec": true}},
+    "action": {"type": "Click"},
+    "next": ["团队竞技场_检查奖励弹窗"]
+  },
+  "团队竞技场_结果页重试下一步": {
+    "recognition": {"type": "And", "param": {"all_of": [
+      {"recognition": {"type": "OCR", "param": {"expected": ["团队\\s*竞技场"], "roi": [0, 0, 260, 65]}}},
+      {"recognition": {"type": "OCR", "param": {"expected": ["[0-9０-９][0-9０-９,，.\\s]*\\s*[pP][tT]"], "roi": [100, 425, 500, 155]}}}
+    ]}},
+    "next": ["团队竞技场_等待识别下一步"]
+  },
+  "团队竞技场_检查奖励弹窗": {
+    "post_delay": 1000,
+    "next": ["[JumpBack]通用_检测限时售卖弹窗", "团队竞技场_奖励弹窗继续", "团队竞技场_再次参赛", "团队竞技场_识别下一步", "团队竞技场_直接识别下一步", "团队竞技场_结果页重试下一步"]
+  },
+  "团队竞技场_奖励弹窗继续": {
+    "recognition": {"type": "OCR", "param": {"expected": ["继\\s*续"], "roi": [205, 1131, 309, 97]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["[JumpBack]通用_检测限时售卖弹窗", "团队竞技场_再次参赛"]
+  },
+  "团队竞技场_再次参赛": {
+    "recognition": {"type": "OCR", "param": {"expected": ["再次\\s*参赛"], "roi": [103, 1163, 187, 68]}},
+    "action": {"type": "Click"},
+    "post_delay": 2000,
+    "timeout": 3000,
+    "rate_limit": 200,
+    "next": ["团队竞技场_竞技值不足"],
+    "on_error": ["团队竞技场_单次比赛完成"]
+  },
+  "团队竞技场_竞技值不足": {
+    "recognition": {"type": "OCR", "param": {"expected": ["竞技值\\s*不足"], "roi": [255, 580, 207, 115]}},
+    "next": ["团队竞技场_拒绝补充竞技值"]
+  },
+  "团队竞技场_拒绝补充竞技值": {
+    "recognition": {"type": "OCR", "param": {"expected": ["否"], "roi": [66, 801, 277, 72]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["团队竞技场_竞技值不足退出"]
+  },
+  "团队竞技场_竞技值不足退出": {
+    "action": {"type": "Click", "param": {"target": "团队竞技场_再次参赛", "target_offset": [300, 0, 0, 0]}},
+    "post_delay": 1000,
+    "next": []
+  },
+  "团队竞技场_单次比赛完成": {
+    "next": ["团队竞技场_选择对手"]
   }
 }

@@ -1,7 +1,7 @@
 {
   "interface_version": 2,
   "name": "MaaUma",
-  "description": "赛马娘自动化助手：进入主界面、社团签到、团队竞技场与日常赛事安排",
+  "description": "赛马娘自动化助手：进入主界面、社团签到、团队竞技场、日常赛事安排、限时售卖购买与领取奖励",
   "license": "MIT",
   "version": "0.1.0",
   "welcome": "请先补齐 docs/resource-placeholders.md 中的模板图和 OCR 文案。",
@@ -14,33 +14,60 @@
   "task": [
     {"name": "进入主界面", "entry": "进入主界面"},
     {"name": "社团签到", "entry": "社团签到", "option": ["捐赠请求跑鞋"]},
-    {"name": "团队竞技场", "entry": "团队竞技场"},
+    {"name": "团队竞技场", "entry": "团队竞技场", "option": ["团队竞技场对手"], "description": "按所选对手重复参赛，每场检查缩短版、限时售卖弹窗和奖励弹窗；点击团队赛事及再次参赛后均检查竞技值不足，拒绝补充后退出并正常结束。"},
     {"name": "日常赛事安排", "entry": "日常赛事", "option": ["日常赛事", "日常传奇赛事"]},
-    {
-      "name": "临时测试：传奇赛事选卡",
-      "entry": "临时测试_传奇赛事选卡",
-      "description": "请手动进入传奇赛事角色列表。先复位滑动三次、等待 1 秒，再查找目标；未找到则滑动 5 秒、等待 1 秒后重试，查找限时 50 秒。",
-      "option": ["日常传奇赛事"]
-    }
+    {"name": "限时售卖购买", "entry": "限时售卖购买", "description": "先返回主页，进入商店和限时特卖，识别并点击全部选择，再点击确定。"},
+    {"name": "领取奖励", "entry": "领取奖励", "option": ["领取奖励箱", "领取任务奖励"], "description": "分别领取奖励箱和任务奖励，两个选项默认开启，可独立关闭；全部关闭时直接结束。"}
   ],
   "option": {
+    "领取奖励箱": {
+      "type": "switch",
+      "label": "奖励箱",
+      "description": "返回主页，点击奖励箱、一键领取和关闭。",
+      "default_case": "Yes",
+      "cases": [
+        {"name": "Yes", "label": "领取", "pipeline_override": {"领取奖励_奖励箱分支": {"next": ["领取奖励_奖励箱返回主页"]}}},
+        {"name": "No", "label": "跳过", "pipeline_override": {"领取奖励_奖励箱分支": {"next": ["领取奖励_任务奖励分支"]}}}
+      ]
+    },
+    "领取任务奖励": {
+      "type": "switch",
+      "label": "任务奖励",
+      "description": "返回主页，点击任务图标和一键领取。",
+      "default_case": "Yes",
+      "cases": [
+        {"name": "Yes", "label": "领取", "pipeline_override": {"领取奖励_任务奖励分支": {"next": ["领取奖励_任务返回主页"]}}},
+        {"name": "No", "label": "跳过", "pipeline_override": {"领取奖励_任务奖励分支": {"next": ["领取奖励_完成"]}}}
+      ]
+    },
+    "团队竞技场对手": {
+      "type": "select",
+      "label": "选着对战对手",
+      "description": "每轮使用同一个对手位置：1 为上方，2 为中间，3 为下方。",
+      "default_case": "1",
+      "cases": [
+        {"name": "1", "pipeline_override": {"团队竞技场_选择对手": {"action": {"type": "Click", "param": {"target": [363, 349, 1, 1]}}}}},
+        {"name": "2", "pipeline_override": {"团队竞技场_选择对手": {"action": {"type": "Click", "param": {"target": [370, 610, 1, 1]}}}}},
+        {"name": "3", "pipeline_override": {"团队竞技场_选择对手": {"action": {"type": "Click", "param": {"target": [383, 887, 1, 1]}}}}}
+      ]
+    },
     "日常赛事": {
       "type": "select",
       "label": "日常赛事",
-      "description": "金币选择月光奖并筛选英里，协助积分选择木星杯并筛选中距离；两者均执行到参赛后关闭结果。日常传奇赛事流程待补充。",
+      "description": "进入日常赛事后先检查入场券，0/3 时跳过并继续日常传奇赛事。金币选择月光奖并筛选英里，协助积分选择木星杯并筛选中距离；两者均执行到参赛后关闭结果。",
       "default_case": "金币",
       "cases": [
         {
           "name": "金币",
           "pipeline_override": {
-            "日常赛事_点击日常赛事": {"next": ["日常赛事_金币_选择月光奖"]},
+            "日常赛事_入场券可用": {"next": ["日常赛事_金币_选择月光奖"]},
             "日常赛事_筛选距离": {"recognition": {"type": "OCR", "param": {"expected": ["英里"]}}}
           }
         },
         {
           "name": "协助积分",
           "pipeline_override": {
-            "日常赛事_点击日常赛事": {"next": ["日常赛事_协助积分_选择木星杯"]},
+            "日常赛事_入场券可用": {"next": ["日常赛事_协助积分_选择木星杯"]},
             "日常赛事_筛选距离": {"recognition": {"type": "OCR", "param": {"expected": ["中距离"]}}}
           }
         }
@@ -49,7 +76,7 @@
     "日常传奇赛事": {
       "type": "select",
       "label": "日常传奇赛事",
-      "description": "选择目标角色。头像分数达到 0.95 直接点击；0.85～0.95 时以同一卡片的名字或赛事任一项辅助校验。目前执行到选择卡片。",
+      "description": "进入日常传奇赛事后先检查入场券，0/1 时结束。选择目标角色，头像分数达到 0.95 直接点击；0.85～0.95 时以同一卡片的名字或赛事任一项辅助校验。选卡后识别四种距离之一，按对应距离筛选选人、参赛、关闭结果，并检查限时售卖弹窗。",
       "default_case": "神鹰",
       "cases": [
         {

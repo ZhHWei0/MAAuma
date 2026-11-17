@@ -1,4 +1,14 @@
 {
+  "通用_检测限时售卖弹窗": {
+    "recognition": {"type": "OCR", "param": {"expected": ["限时\\s*特卖\\s*开售"], "roi": [219, 358, 280, 106]}},
+    "next": ["通用_取消限时售卖弹窗"]
+  },
+  "通用_取消限时售卖弹窗": {
+    "recognition": {"type": "OCR", "param": {"expected": ["取\\s*消"], "roi": [66, 800, 275, 66]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": []
+  },
   "回到主界面": {
     "recognition": {"type": "OCR", "param": {"expected": ["主页"], "roi": [0, 1120, 720, 160]}},
     "action": {"type": "Click"},

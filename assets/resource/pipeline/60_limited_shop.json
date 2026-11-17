@@ -1,0 +1,41 @@
+{
+  "限时售卖购买": {
+    "next": ["限时售卖_返回主页"],
+    "timeout": 120000
+  },
+  "限时售卖_返回主页": {
+    "recognition": {"type": "And", "param": {"all_of": ["回到主界面"]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["限时售卖_点击商店图标"]
+  },
+  "限时售卖_点击商店图标": {
+    "recognition": {"type": "TemplateMatch", "param": {
+      "template": ["商店/商店图标.png"],
+      "roi": [191, 1045, 110, 106],
+      "green_mask": true,
+      "threshold": 0.85
+    }},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["限时售卖_点击限时特卖"]
+  },
+  "限时售卖_点击限时特卖": {
+    "recognition": {"type": "OCR", "param": {"expected": ["限时\\s*特卖"], "roi": [357, 743, 349, 294]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["限时售卖_全部选择"]
+  },
+  "限时售卖_全部选择": {
+    "recognition": {"type": "OCR", "param": {"expected": ["全\\s*部\\s*选\\s*择"], "roi": [555, 920, 156, 70]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["限时售卖_确认购买"]
+  },
+  "限时售卖_确认购买": {
+    "recognition": {"type": "OCR", "param": {"expected": ["确\\s*定"], "roi": [224, 1049, 276, 65]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": []
+  }
+}
