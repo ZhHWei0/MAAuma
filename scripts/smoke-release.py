@@ -57,6 +57,7 @@ def main(root):
                     "DailyRaceSelectStableNumber",
                     "DailyLegendSelectCard",
                     "DailyLegendConfigureRaceFilter",
+                    "RewardDerbySpin",
                 }.issubset(client.custom_action_list)
             finally:
                 if client.connected:
@@ -64,7 +65,7 @@ def main(root):
                 if child.poll() is None:
                     child.terminate()
                 child.wait(timeout=10)
-        print("Packaged Agent connected and registered all three custom actions.", flush=True)
+        print("Packaged Agent connected and registered the custom actions.", flush=True)
 
 
 if __name__ == "__main__":

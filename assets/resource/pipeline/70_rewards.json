@@ -24,7 +24,20 @@
     "next": ["领取奖励_奖励箱一键领取"]
   },
   "领取奖励_奖励箱一键领取": {
-    "recognition": {"type": "OCR", "param": {"expected": ["一\\s*键\\s*领\\s*取"], "roi": [382, 1147, 276, 75]}},
+    "recognition": {"type": "OCR", "param": {"expected": ["全\\s*部\\s*领\\s*取", "一\\s*键\\s*领\\s*取"], "roi": [382, 1147, 276, 75]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["领取奖励_关闭邮箱领取结果"],
+    "timeout": 3000,
+    "rate_limit": 200,
+    "on_error": ["领取奖励_跳过邮箱领取结果"]
+  },
+  "领取奖励_跳过邮箱领取结果": {
+    "post_delay": 0,
+    "next": ["领取奖励_关闭奖励箱"]
+  },
+  "领取奖励_关闭邮箱领取结果": {
+    "recognition": {"type": "OCR", "param": {"expected": ["关\\s*闭"], "roi": [201, 641, 319, 639]}},
     "action": {"type": "Click"},
     "post_delay": 1000,
     "next": ["领取奖励_关闭奖励箱"]
@@ -60,7 +73,159 @@
     "recognition": {"type": "OCR", "param": {"expected": ["一\\s*键\\s*领\\s*取"], "roi": [229, 1043, 260, 76]}},
     "action": {"type": "Click"},
     "post_delay": 1000,
+    "next": ["领取奖励_等待任务领取结果"]
+  },
+  "领取奖励_等待任务领取结果": {
+    "pre_delay": 0,
+    "post_delay": 0,
+    "timeout": 3000,
+    "rate_limit": 200,
+    "next": ["领取奖励_关闭任务领取结果"],
+    "on_error": ["领取奖励_活动限定任务分支"]
+  },
+  "领取奖励_关闭任务领取结果": {
+    "recognition": {"type": "OCR", "param": {"expected": ["关\\s*闭"], "roi": [201, 641, 319, 639]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["领取奖励_活动限定任务分支"]
+  },
+  "领取奖励_活动限定任务分支": {
+    "pre_delay": 0,
+    "post_delay": 0,
+    "timeout": 5000,
+    "rate_limit": 250,
+    "next": ["领取奖励_点击活动限定任务图标"],
+    "on_error": ["领取奖励_转盘德比分支"]
+  },
+  "领取奖励_点击活动限定任务图标": {
+    "recognition": {"type": "TemplateMatch", "param": {"template": ["奖励/活动限定任务图标.png"], "roi": [521, 983, 199, 198], "green_mask": true, "threshold": 0.85}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["领取奖励_点击剧情活动任务"]
+  },
+  "领取奖励_点击剧情活动任务": {
+    "recognition": {"type": "OCR", "param": {"expected": ["剧\\s*情\\s*活\\s*动"], "roi": [42, 365, 641, 122]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["领取奖励_活动任务一键领取"]
+  },
+  "领取奖励_活动任务一键领取": {
+    "recognition": {"type": "And", "param": {"all_of": ["领取奖励_任务一键领取"]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["领取奖励_等待活动领取结果"]
+  },
+  "领取奖励_等待活动领取结果": {
+    "pre_delay": 0,
+    "post_delay": 0,
+    "timeout": 3000,
+    "rate_limit": 200,
+    "next": ["领取奖励_关闭活动领取结果"],
+    "on_error": ["领取奖励_转盘德比分支"]
+  },
+  "领取奖励_关闭活动领取结果": {
+    "recognition": {"type": "And", "param": {"all_of": ["领取奖励_关闭任务领取结果"]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["领取奖励_转盘德比分支"]
+  },
+  "领取奖励_转盘德比分支": {
+    "pre_delay": 0,
+    "post_delay": 0,
+    "timeout": 3000,
+    "rate_limit": 250,
     "next": ["领取奖励_完成"]
+  },
+  "领取奖励_转盘德比返回主页": {
+    "recognition": {"type": "And", "param": {"all_of": ["回到主界面"]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["领取奖励_点击剧情活动图标"],
+    "timeout": 5000,
+    "rate_limit": 250,
+    "on_error": ["领取奖励_完成"]
+  },
+  "领取奖励_点击剧情活动图标": {
+    "recognition": {"type": "TemplateMatch", "param": {"template": ["奖励/剧情活动图标.png"], "roi": [521, 983, 199, 198], "green_mask": true, "threshold": 0.85}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["领取奖励_点击转盘德比"]
+  },
+  "领取奖励_点击转盘德比": {
+    "recognition": {"type": "OCR", "param": {"expected": ["轮\\s*盘\\s*德\\s*比"], "roi": [10, 813, 697, 144]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["领取奖励_转盘德比选项"]
+  },
+  "领取奖励_转盘德比选项": {
+    "recognition": {"type": "OCR", "param": {"expected": ["选\\s*项"], "roi": [544, 73, 176, 142]}},
+    "action": {"type": "Click"},
+    "next": ["领取奖励_转盘德比已开启", "领取奖励_转盘德比切换开启"]
+  },
+  "领取奖励_转盘德比已开启": {
+    "recognition": {"type": "OCR", "param": {"expected": ["^\\s*开\\s*$"], "roi": [503, 161, 157, 79]}},
+    "pre_delay": 0,
+    "post_delay": 1000,
+    "next": ["领取奖励_转盘德比点击设置位置"]
+  },
+  "领取奖励_转盘德比切换开启": {
+    "recognition": {"type": "OCR", "param": {"expected": ["^\\s*关\\s*$"], "roi": [503, 161, 157, 79]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["领取奖励_转盘德比点击设置位置"]
+  },
+  "领取奖励_转盘德比点击设置位置": {
+    "action": {"type": "Click", "param": {"target": [218, 540, 1, 1]}},
+    "pre_delay": 0,
+    "next": ["领取奖励_转盘德比保存选项"]
+  },
+  "领取奖励_转盘德比保存选项": {
+    "recognition": {"type": "OCR", "param": {"expected": ["保\\s*存"], "roi": [377, 1146, 283, 77]}},
+    "action": {"type": "Click"},
+    "next": ["领取奖励_转盘德比关闭提示"]
+  },
+  "领取奖励_转盘德比关闭提示": {
+    "recognition": {"type": "OCR", "param": {"expected": ["关\\s*闭"], "roi": [216, 797, 288, 73]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["领取奖励_转动转盘德比"]
+  },
+  "领取奖励_转动转盘德比": {
+    "action": {"type": "Custom", "param": {
+      "custom_action": "RewardDerbySpin",
+      "custom_action_param": {
+        "balance_node": "领取奖励_转盘币数量",
+        "spin_node": "领取奖励_转盘德比点击提示",
+        "close_node": "领取奖励_转盘德比关闭转动结果",
+        "insufficient_node": "领取奖励_轮盘币不足",
+        "cost": 10,
+        "interval_ms": 500,
+        "stage_timeout_ms": 60000
+      }
+    }},
+    "next": ["领取奖励_完成"]
+  },
+  "领取奖励_转盘币数量": {
+    "recognition": {"type": "OCR", "param": {"expected": ["^\\s*[0-9０-９][0-9０-９,，\\s]*$"], "roi": [530, 7, 146, 40]}},
+    "next": []
+  },
+  "领取奖励_轮盘币不足": {
+    "recognition": {"type": "OCR", "param": {"expected": ["轮\\s*盘\\s*币\\s*不\\s*足"], "roi": [275, 615, 170, 58]}},
+    "next": []
+  },
+  "领取奖励_转盘德比点击提示": {
+    "recognition": {"type": "OCR", "param": {"expected": ["^\\s*点\\s*击\\s*[!！]?\\s*$"], "roi": [265, 374, 180, 176]}},
+    "action": {"type": "Click"},
+    "pre_delay": 0,
+    "post_delay": 0,
+    "next": []
+  },
+  "领取奖励_转盘德比关闭转动结果": {
+    "recognition": {"type": "OCR", "param": {"expected": ["^\\s*关\\s*闭\\s*$"], "roi": [215, 798, 288, 80]}},
+    "action": {"type": "Click"},
+    "pre_delay": 0,
+    "post_delay": 0,
+    "next": []
   },
   "领取奖励_完成": {
     "next": []

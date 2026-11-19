@@ -48,8 +48,11 @@
     "recognition": {"type": "OCR", "param": {"expected": ["^\\s*[1-9１-９][0-9０-９]*\\s*[/／]\\s*[1１]\\s*$"], "roi": [607, 10, 86, 32]}},
     "next": ["日常传奇赛事_复位列表"]
   },
+  "临时测试_传奇赛事选卡": {
+    "next": ["日常传奇赛事_复位列表"]
+  },
   "日常传奇赛事_复位列表": {
-    "action": {"type": "Swipe", "param": {"begin": [406, 557], "end": [410, 1191], "duration": 1000}},
+    "action": {"type": "Swipe", "param": {"begin": [406, 557], "end": [410, 1191], "duration": 700}},
     "repeat": 3,
     "pre_delay": 0,
     "post_delay": 1000,
@@ -85,7 +88,7 @@
     "next": []
   },
   "日常传奇赛事_滑动列表": {
-    "action": {"type": "Swipe", "param": {"begin": [352, 880], "end": [351, 423], "duration": 5000}},
+    "action": {"type": "Swipe", "param": {"begin": [352, 880], "end": [351, 423], "duration": 500, "end_hold": 400}},
     "pre_delay": 0,
     "post_delay": 1000,
     "next": []
@@ -188,22 +191,106 @@
   "日常传奇赛事_固定位置点击三次": {
     "action": {"type": "Click", "param": {"target": [522, 650, 1, 1]}},
     "repeat": 3,
+    "next": ["日常传奇赛事_选人后继续"]
+  },
+  "日常传奇赛事_选人后继续": {
+    "recognition": {"type": "OCR", "param": {"expected": ["继\\s*续"], "roi": [218, 1130, 281, 82]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
     "next": ["日常传奇赛事_确认参赛"]
   },
   "日常传奇赛事_确认参赛": {
     "recognition": {"type": "OCR", "param": {"expected": ["参赛"], "roi": [375, 801, 283, 69]}},
     "action": {"type": "Click"},
     "post_delay": 5000,
-    "next": ["日常传奇赛事_关闭比赛结果"]
+    "next": ["日常传奇赛事_不可直接查看结果图片", "日常传奇赛事_查看结果", "日常传奇赛事_前往赛事文字备用"]
   },
-  "日常传奇赛事_关闭比赛结果": {
-    "recognition": {"type": "OCR", "param": {"expected": ["关闭"], "roi": [221, 1141, 279, 83]}},
+  "日常传奇赛事_不可直接查看结果图片": {
+    "enabled": false,
+    "recognition": {"type": "TemplateMatch", "param": {
+      "template": ["日常传奇赛事/TODO_不可直接查看结果.png"],
+      "roi": [153, 1131, 410, 96],
+      "threshold": 0.85
+    }},
+    "next": ["日常传奇赛事_前往赛事"]
+  },
+  "日常传奇赛事_前往赛事文字备用": {
+    "recognition": {"type": "And", "param": {"all_of": ["日常传奇赛事_前往赛事"]}},
+    "next": ["日常传奇赛事_前往赛事"]
+  },
+  "日常传奇赛事_前往赛事": {
+    "recognition": {"type": "OCR", "param": {"expected": ["前\\s*往\\s*赛\\s*事"], "roi": [153, 1131, 410, 96]}},
     "action": {"type": "Click"},
+    "post_delay": 1000,
+    "timeout": 120000,
+    "next": ["日常传奇赛事_实跑参赛"]
+  },
+  "日常传奇赛事_实跑参赛": {
+    "recognition": {"type": "OCR", "param": {"expected": ["参\\s*赛"], "roi": [214, 1130, 290, 73]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "timeout": 120000,
+    "next": ["日常传奇赛事_实跑跳过", "日常传奇赛事_实跑继续"]
+  },
+  "日常传奇赛事_实跑跳过": {
+    "recognition": {"type": "TemplateMatch", "param": {"template": ["启动/跳过按钮.png"], "roi": [485, 1158, 149, 122], "green_mask": true, "threshold": 0.85}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "timeout": 120000,
+    "next": ["日常传奇赛事_实跑跳过", "日常传奇赛事_实跑继续"]
+  },
+  "日常传奇赛事_实跑继续": {
+    "recognition": {"type": "OCR", "param": {"expected": ["继\\s*续"], "roi": [204, 1124, 470, 104]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "timeout": 120000,
+    "next": ["[JumpBack]通用_检测限时售卖弹窗", "日常传奇赛事_实跑继续", "日常传奇赛事_实跑确认主页"]
+  },
+  "日常传奇赛事_实跑确认主页": {
+    "recognition": {"type": "And", "param": {"all_of": ["日常传奇赛事_确认已回主页"]}},
+    "post_delay": 1000,
+    "timeout": 120000,
+    "next": ["[JumpBack]通用_检测限时售卖弹窗", "日常传奇赛事_实跑继续", "日常传奇赛事_主页最终确认"]
+  },
+  "日常传奇赛事_查看结果": {
+    "recognition": {"type": "OCR", "param": {"expected": ["查\\s*看\\s*结\\s*果"], "roi": [153, 1131, 410, 96]}},
+    "action": {"type": "Click"},
+    "post_delay": 2000,
+    "next": ["日常传奇赛事_再次点击查看结果"]
+  },
+  "日常传奇赛事_再次点击查看结果": {
+    "action": {"type": "Click", "param": {"target": "日常传奇赛事_查看结果"}},
+    "next": ["日常传奇赛事_结果继续"]
+  },
+  "日常传奇赛事_结果继续": {
+    "recognition": {"type": "OCR", "param": {"expected": ["继\\s*续"], "roi": [223, 1133, 429, 87]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
+    "next": ["日常传奇赛事_结果再次继续"]
+  },
+  "日常传奇赛事_结果再次继续": {
+    "recognition": {"type": "OCR", "param": {"expected": ["继\\s*续"], "roi": [223, 1133, 429, 87]}},
+    "action": {"type": "Click"},
+    "post_delay": 1000,
     "next": ["日常传奇赛事_比赛结束检查"]
   },
   "日常传奇赛事_比赛结束检查": {
     "post_delay": 1000,
-    "next": ["[JumpBack]通用_检测限时售卖弹窗", "日常传奇赛事_日常传奇部分完成"]
+    "next": ["[JumpBack]通用_检测限时售卖弹窗", "日常传奇赛事_确认已回主页", "日常传奇赛事_结果继续"]
+  },
+  "日常传奇赛事_确认已回主页": {
+    "recognition": {"type": "And", "param": {"all_of": [
+      "主界面_已到达",
+      {"recognition": {"type": "TemplateMatch", "param": {
+        "template": ["商店/商店图标.png"], "roi": [191, 1045, 110, 106], "green_mask": true, "threshold": 0.85
+      }}}
+    ]}},
+    "post_delay": 1000,
+    "next": ["[JumpBack]通用_检测限时售卖弹窗", "日常传奇赛事_主页最终确认", "日常传奇赛事_结果继续"]
+  },
+  "日常传奇赛事_主页最终确认": {
+    "recognition": {"type": "And", "param": {"all_of": ["日常传奇赛事_确认已回主页"]}},
+    "next": ["日常传奇赛事_日常传奇部分完成"]
   },
   "日常传奇赛事_日常传奇部分完成": {
     "next": []

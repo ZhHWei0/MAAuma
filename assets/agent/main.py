@@ -1,4 +1,4 @@
-"""MaaUma's stateful daily race action; screen operations remain in pipeline JSON."""
+"""MaaUma stateful actions; screen operations remain in pipeline JSON."""
 
 import json
 import logging
@@ -25,7 +25,11 @@ def read_number(context: Context, node: str):
     job = context.tasker.controller.post_screencap().wait()
     if not job.succeeded or context.tasker.stopping:
         return None
-    detail = context.run_recognition(node, job.get())
+    return read_number_from_frame(context, node, job.get())
+
+
+def read_number_from_frame(context: Context, node: str, image):
+    detail = context.run_recognition(node, image)
     if not detail or not detail.hit:
         LOG.warning("No number recognized in %s", node)
         return None
@@ -84,6 +88,96 @@ class DailyRaceSelectStableNumber(CustomAction):
             return False
         except Exception:
             LOG.exception("Daily race number comparison failed")
+            return False
+
+
+@AgentServer.custom_action("RewardDerbySpin")
+class RewardDerbySpin(CustomAction):
+    def run(self, context: Context, argv: CustomAction.RunArg) -> bool:
+        try:
+            params = json.loads(argv.custom_action_param)
+            interval = params["interval_ms"] / 1000
+            stage_timeout = params["stage_timeout_ms"] / 1000
+            deadline = time.monotonic() + stage_timeout
+            spin_node = params["spin_node"]
+            close_node = params["close_node"]
+            insufficient_node = params["insufficient_node"]
+            spin_point = None
+            probe_attempts = 0
+            after_result = False
+            log = logging.getLogger("maauma.reward_derby")
+
+            def running():
+                return active(context, deadline)
+
+            def click(node, box):
+                nonlocal tick
+                if not running():
+                    return False
+                tick = time.monotonic()
+                result = context.run_action(node, box=box)
+                return bool(result and result.success)
+
+            while running():
+                tick = time.monotonic()
+                frame_job = context.tasker.controller.post_screencap().wait()
+                if not frame_job.succeeded or not running():
+                    return False
+                frame = frame_job.get()
+                insufficient = context.run_recognition(insufficient_node, frame)
+                if not running():
+                    return False
+                if insufficient and insufficient.hit:
+                    log.info("Game reported insufficient derby coins; finished")
+                    return True
+
+                close = context.run_recognition(close_node, frame) if spin_point is not None or after_result else None
+                if close and close.hit:
+                    if not click(close_node, tuple(close.box)):
+                        return False
+                    if spin_point is not None:
+                        log.info("Closed derby result; waiting for spin prompt before reading balance")
+                        deadline = time.monotonic() + stage_timeout
+                    spin_point = None
+                    probe_attempts = 0
+                    after_result = True
+                else:
+                    prompt = context.run_recognition(spin_node, frame)
+                    if prompt and prompt.hit:
+                        # Read the current balance each time the button is ready.
+                        # An earlier OCR result cannot authorize another spin.
+                        balance = read_number_from_frame(context, params["balance_node"], frame)
+                        if not running():
+                            return False
+                        coins = balance[0] if balance is not None else None
+                        if coins is not None and coins < params["cost"]:
+                            log.info("Derby balance %s is below %s; finished", coins, params["cost"])
+                            return True
+                        if coins is None and probe_attempts >= 3:
+                            log.info("Unreadable balance and unchanged spin prompt after %d attempts; finished", probe_attempts)
+                            return True
+                        if spin_point is None:
+                            x, y, width, height = prompt.box
+                            spin_point = (x + width // 2, y + height // 2, 1, 1)
+                            log.info("Derby balance=%s; clicking at %s", coins, spin_point[:2])
+                            deadline = time.monotonic() + stage_timeout
+                            after_result = False
+                        probe_attempts = probe_attempts + 1 if coins is None else 0
+                    else:
+                        # During the animation, keep pressing the same point to skip it.
+                        probe_attempts = 0
+                    if spin_point is not None and not click(spin_node, spin_point):
+                        return False
+
+                # Keep presses at least one interval apart and stay responsive to Stop.
+                next_tick = tick + interval
+                while running() and (remaining := next_tick - time.monotonic()) > 0:
+                    time.sleep(min(0.1, remaining))
+
+            log.warning("Derby stopped or no progress for %s ms", params["stage_timeout_ms"])
+            return False
+        except Exception:
+            logging.getLogger("maauma.reward_derby").exception("Derby spin failed")
             return False
 
 

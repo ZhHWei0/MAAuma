@@ -174,6 +174,16 @@ class DailyLegendSelectCard(CustomAction):
             # before entering this callback. Only searching uses this deadline.
             page = 0
             swipe_node = params["swipe_node"]
+            swipe_data = context.get_node_data(swipe_node)
+            if not swipe_data:
+                LOG.error("Missing legend list swipe node: %s", swipe_node)
+                return False
+            # MaaFramework returns duration and end_hold as arrays. The list
+            # gesture uses one segment; look up its timings from the pipeline.
+            swipe_params = swipe_data["action"]["param"]
+            swipe_duration = (swipe_params.get("duration") or [200])[0]
+            swipe_end_hold = (swipe_params.get("end_hold") or [0])[0]
+            swipe_seconds = (swipe_duration + swipe_end_hold) / 1000
             while running():
                 job = context.tasker.controller.post_screencap().wait()
                 if not job.succeeded or not running():
@@ -228,14 +238,14 @@ class DailyLegendSelectCard(CustomAction):
 
                 if not running():
                     break
-                # Do not issue a full 5-second gesture when the deadline is
-                # nearer. Leave the screen still for the remaining time.
+                # Leave the screen still when the remaining time cannot fit
+                # the full gesture, including its hold before releasing.
                 remaining = deadline - time.monotonic()
-                if remaining < 5.0:
-                    LOG.info("Search deadline too near for another 5000ms swipe; remaining=%.2fs", remaining)
+                if remaining < swipe_seconds:
+                    LOG.info("Search deadline too near for another %.2fs swipe; remaining=%.2fs", swipe_seconds, remaining)
                     wait_while_running(remaining, running)
                     break
-                LOG.info("Legend search swipe page=%s duration=5000ms", page)
+                LOG.info("Legend search swipe page=%s duration=%sms end_hold=%sms", page, swipe_duration, swipe_end_hold)
                 result = context.run_action(swipe_node, pipeline_override={swipe_node: {"post_delay": 0}})
                 if not result or not result.success:
                     LOG.error("Legend list swipe failed")
