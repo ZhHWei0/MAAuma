@@ -8,7 +8,7 @@
 图像识别与模拟操作，帮助完成每天的赛事、社团请求和奖励领取。<br>
 由 [MaaFramework](https://github.com/MaaXYZ/MaaFramework) 驱动，使用 [MFAAvalonia](https://github.com/MaaXYZ/MFAAvalonia) 作为操作界面。
 
-[下载 Windows 版](https://github.com/ZhHWei0/wuma/releases) · [新手上路](docs/quick-start.md) · [功能介绍](docs/introduction.md) · [问题反馈](https://github.com/ZhHWei0/wuma/issues)
+[下载 Windows 版](https://github.com/ZhHWei0/MaaUma/releases) · [新手上路](docs/quick-start.md) · [功能介绍](docs/introduction.md) · [问题反馈](https://github.com/ZhHWei0/wuma/issues)
 
 <img alt="平台 Windows x64" src="https://img.shields.io/badge/Platform-Windows%20x64-0078D4?logo=windows&logoColor=white">
 <img alt="框架 MaaFramework" src="https://img.shields.io/badge/Framework-MaaFramework-00A98F">
@@ -29,11 +29,11 @@
 
 ## 下载与使用
 
-1. 前往 [Releases](https://github.com/ZhHWei0/wuma/releases)，下载 **`MaaUma-v…-win-x64.zip`** 并完整解压。
+1. 前往 [Releases](https://github.com/ZhHWei0/MaaUma/releases)，下载 **`MaaUma-v…-win-x64.zip`** 并完整解压。
 2. 打开 Android 模拟器，双击解压目录中的 **`Start MaaUma.cmd`**。
 3. 在前端连接模拟器，选择任务并配置，首次使用先运行“进入主界面”。
 
-便携包已包含前端、.NET、Python Agent、OCR 模型和任务资源。GitHub 自动生成的 **Source code** 是源码；首个 Release 公开前，下载页暂时没有成品。
+便携包已包含前端、.NET、Python Agent、OCR 模型和任务资源。GitHub 自动生成的 **Source code** 是源码。
 
 目前适配 **Windows x64、简体中文游戏界面、9:16 竖屏模拟器**，识别坐标按 720×1280 归一化。其他画面比例或语言需要适配。
 
